@@ -15,7 +15,7 @@ using PersonalizedGreeting = System.String;
 
 namespace FP;
 
-public static class ExtensionMethod
+public static class Ext
 {
     public static Func<T2, R> Apply<T1, T2, R>(this Func<T1, T2, R> func, T1 t1)
         => t2 => func(t1, t2);
@@ -25,27 +25,28 @@ public static class ExtensionMethod
 }
 
 
-//public class GeneralizingPartial
-//{
-//    public void Run()
-//    {
-//        var greet = (Greeting gr, string age, Name name) => $"{gr}, {name}, {age}";
+public class GeneralizingPartial_0
+{
+    public void Run()
+    {
+        var greet = (Greeting gr, string age, Name name) => $"{gr}, {name}, {age}";
 
-//        Name[] names = { "Tritan", "Ivan" };
+        Name[] names = { "Tritan", "Ivan" };
 
-//        var greetInformally = greet.Apply("Hey").Apply("NewAge");
+        var greetInformally = greet.Apply("Hey").Apply("NewAge");
 
-//        names.Map(greetInformally).ForEach(x =>
-//        {
-//            WriteLine(x);
-//        });
-//    }
-//}
+        names.Map(greetInformally).ForEach(x =>
+        {
+            WriteLine(x);
+        });
+    }
+}
 
 
 
 public class GeneralizingPartial
 {
+
     public void Run()
     {
         //var greetWith = (Greeting gr) => (Name name) => $"{gr}, {name}";
@@ -66,8 +67,22 @@ public class GeneralizingPartial
         PersonalizedGreeting GreeterMethod(Greeting gr, Name name) // local functions (local methods)
             => $"{gr}, {name}";
 
-        Func<Name, PersonalizedGreeting> GreetWith(Greeting greeting)
-            //=> greeting => greeting;
-            => GreeterMethod.ToFunc
+        //Func<Name, PersonalizedGreeting> GreetWith(Greeting greeting)
+        //    => GreeterMethod.Apply(greeting);
+        // This line will not compile
+
+        Func<Name, PersonalizedGreeting> GreetWith_1(Greeting greeting)
+            => Ext.Apply<Greeting, Name, PersonalizedGreeting>(GreeterMethod, greeting);
+
+        Func<Name, PersonalizedGreeting> GreetWith_2(Greeting greeting)
+            => new Func<Greeting, Name, PersonalizedGreeting>(GreeterMethod).Apply(greeting);
     }
+}
+
+
+public class TypeInference_Delegate
+{
+    readonly string separator = ", ";
+
+
 }
