@@ -11,6 +11,7 @@ using static LaYumba.Functional.F;
 using Name = System.String;
 using Greeting = System.String;
 using PersonalizedGreeting = System.String;
+using Microsoft.VisualBasic;
 
 
 namespace FP;
@@ -22,6 +23,10 @@ public static class Ext
 
     public static Func<T2, T3, R> Apply<T1, T2, T3, R>(this Func<T1, T2, T3, R> func, T1 t1)
         => (t2, t3) => func(t1, t2, t3);
+
+    public static Func<T1, Func<T2, R>> Curry<T1, T2, R>
+        (this Func<T1, T2, R> f)
+        => t1 => t2 => f(t1, t2);
 }
 
 
@@ -43,8 +48,7 @@ public class GeneralizingPartial_0
 }
 
 
-
-public class GeneralizingPartial
+public class GeneralizingPartial_1
 {
 
     public void Run()
@@ -80,9 +84,48 @@ public class GeneralizingPartial
 }
 
 
+public record ConnectionString(string Value)
+{
+    public static implicit operator string(ConnectionString c) => c.Value;
+    public static implicit operator ConnectionString(string s) => new (s);
+}
+
+
+public class GeneralizingPartial
+{
+
+    public void Run()
+    {
+        var greet = (Greeting gr, Name name) => $"{gr}, {name}";
+
+        Name[] names = { "Tritan", "Ivan" };
+
+        var greetWith = greet.Curry();
+        names.Map(greetWith("Hola")).ForEach(WriteLine);
+
+
+        ConnectionString connnString = "localhost";
+        string value = connnString;
+    }
+}
+
+
 public class TypeInference_Delegate
 {
     readonly string separator = ", ";
 
+    // 1. field
+    readonly Func<Greeting, Name, PersonalizedGreeting> GreeterField
+        = (gr, name) => $"{gr}, {name}";
 
+    // 2. property
+    Func<Greeting, Name, PersonalizedGreeting> GreeterProperty
+        => (gr, name) => $"{gr}{separator}{name}";
+
+    //  3. factory
+    Func<Greeting, Name, PersonalizedGreeting> GreeterFactory<T>()
+        => (gr, t) => $"{gr}{separator}{t}";
 }
+
+
+
