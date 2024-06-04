@@ -4,6 +4,7 @@ using static System.Console;
 using Name = System.String;
 using Greeting = System.String;
 using PersonalizedGreeting = System.String;
+using FP;
 
 public class GeneralizingPartial
 {
@@ -22,7 +23,7 @@ public class Program
 {
    public static void Main()
    {
-      new GeneralizingPartial().Run();
+      new ConnectionHelperTest().Run();
       Console.ReadLine();
    }
 }

@@ -16,18 +16,18 @@ using Microsoft.VisualBasic;
 
 namespace FP;
 
-public static class Ext
-{
-    public static Func<T2, R> Apply<T1, T2, R>(this Func<T1, T2, R> func, T1 t1)
-        => t2 => func(t1, t2);
+//public static class Ext
+//{
+//    public static Func<T2, R> Apply<T1, T2, R>(this Func<T1, T2, R> func, T1 t1)
+//        => t2 => func(t1, t2);
 
-    public static Func<T2, T3, R> Apply<T1, T2, T3, R>(this Func<T1, T2, T3, R> func, T1 t1)
-        => (t2, t3) => func(t1, t2, t3);
+//    public static Func<T2, T3, R> Apply<T1, T2, T3, R>(this Func<T1, T2, T3, R> func, T1 t1)
+//        => (t2, t3) => func(t1, t2, t3);
 
-    public static Func<T1, Func<T2, R>> Curry<T1, T2, R>
-        (this Func<T1, T2, R> f)
-        => t1 => t2 => f(t1, t2);
-}
+//    public static Func<T1, Func<T2, R>> Curry<T1, T2, R>
+//        (this Func<T1, T2, R> f)
+//        => t1 => t2 => f(t1, t2);
+//}
 
 
 public class GeneralizingPartial_0
@@ -76,7 +76,7 @@ public class GeneralizingPartial_1
         // This line will not compile
 
         Func<Name, PersonalizedGreeting> GreetWith_1(Greeting greeting)
-            => Ext.Apply<Greeting, Name, PersonalizedGreeting>(GreeterMethod, greeting);
+            => FuncExt.Apply<Greeting, Name, PersonalizedGreeting>(GreeterMethod, greeting);
 
         Func<Name, PersonalizedGreeting> GreetWith_2(Greeting greeting)
             => new Func<Greeting, Name, PersonalizedGreeting>(GreeterMethod).Apply(greeting);
