@@ -22,6 +22,10 @@ public class Program
 {
    public async static Task Main(string[] args)
    {
+      Boc.Chapter9.ValidationStrategies.Run();
+      ReadLine();
+      return;
+
       var cliExamples = new Dictionary<string, Action>
       {
          ["ParallelSortUnsafe"] = Chapter1.MutationShouldBeAvoided.WithArrayItBreaks,
