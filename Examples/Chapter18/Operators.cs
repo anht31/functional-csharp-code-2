@@ -5,86 +5,151 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using LaYumba.Functional;
 using static LaYumba.Functional.F;
+using System.Net.Mail;
 
 namespace Examples.Chapter18
 {
-   static class KeySequences
-   {
-      public static void Run()
-      {
-         WriteLine("Enter some inputs to push them to 'inputs', or 'q' to quit");
+    static class KeySequences
+    {
+        public static void Run2()
+        {
+            var keys = new Subject<string>();
 
-         var keys = new Subject<ConsoleKeyInfo>();
-         var halfSec = TimeSpan.FromMilliseconds(500);
+            var keyMap = keys.Select(_ => keys.Take(1));
 
-         var keysAlt = keys
-            .Where(key => key.Modifiers.HasFlag(ConsoleModifiers.Alt));
+            //using (keyMap.Trace("KeyMap"))
+            //{
+            //    keys.OnNext("a");
+            //    keys.OnNext("b");
+            //    keys.OnNext("c");
+            //}
 
-         var twoKeyCombis =
-            from first in keysAlt
-            from second in keysAlt.Take(halfSec).Take(1)
-            select (First: first, Second: second);
+        }
 
-         var altKB =
-            from tpl in twoKeyCombis
-            where tpl.First.Key == ConsoleKey.K
-               && tpl.Second.Key == ConsoleKey.B
-            select Unit();
+        public static void Run03()
+        {
+            var keys = new Subject<string>();
 
-         using (keys.Select(k => Environment.NewLine + k.KeyChar).Trace("keys"))
-         using (twoKeyCombis.Select(ks => $"{ks.Item1.KeyChar}-{ks.Item2.KeyChar}").Trace("twoKeyCombis"))
-         using (altKB.Trace("altKB"))
-            for (ConsoleKeyInfo key; (key = ReadKey()).Key != ConsoleKey.Q;)
-               keys.OnNext(key);
-      }
-   }
+            var two = keys.SelectMany(_ => keys);
 
-   static class Operators
-   {
-      public static void ScanEx()
-      {
-         IObservable<Transaction> transactions = null;
+            //var keysMap = from first in keys
+            //              from second in two
+            //              select (first, second);
 
-         decimal initialBalance = 0;
-         IObservable<decimal> balance = transactions.Scan(initialBalance
-            , (bal, trans) => bal + trans.Amount);
+            var keysMap02 = keys.SelectMany(
+                    _ => two,
+                    (first, second) => (first, second)
+                );
 
-         IObservable<decimal> dipsIntoTheRed =
-            from bal in balance.PairWithPrevious()
-            where bal.Previous >= 0
-               && bal.Current < 0
-            select bal.Current;
+            using (keysMap02.Trace("keysMap"))
+            {
+                keys.OnNext("a");
+                keys.OnNext("b");
+            }
+            // Result: keysMap -> (a, b)
 
 
-         var dipsIntoRed = transactions
-            .GroupBy(t => t.AccountId)
-            .Select(DipsIntoTheRed)
-            .Merge();
-      }
 
-      public static IObservable<Guid> DipsIntoTheRed
-         (IGroupedObservable<Guid, Transaction> transactions)
-      {
-         Guid accountId = transactions.Key;
-         decimal initialBalance = 0;
 
-         var balance = transactions.Scan(initialBalance
-            , (bal, trans) => bal + trans.Amount);
 
-         return from bal in balance.PairWithPrevious()
-                where bal.Previous >= 0
-                   && bal.Current < 0
-                select accountId;
-      }
+            //var keysMap02 = keys.SelectMany(
+            //        _ => keys.Take(1),
+            //        (first, second) => (first, second)
+            //    );
 
-      public static IObservable<T> MergeAll<T>
-         (this IObservable<IObservable<T>> source)
-         => source.SelectMany(x => x);
-   }
 
-   internal class Transaction
-   {
-      public Guid AccountId { get; }
-      public decimal Amount { get; }
-   }
+            //from first in IObservable<T>
+            //from second in IObservable<R>
+            //select (first, second);
+
+            // Expression
+            // -> Expert: 
+            //  -> Second: as T -> keys.Take(1) as IObservable<T>
+        }
+
+
+        //var obs02 = keys.SelectMany(x => keys.Take(1));
+
+        //var keysMap02 = from first in keys
+        //                from second in obs02
+        //                select (first, second);
+
+
+        public static void Run()
+        {
+            WriteLine("Enter some inputs to push them to 'inputs', or 'q' to quit");
+
+            var keys = new Subject<ConsoleKeyInfo>();
+            var halfSec = TimeSpan.FromMilliseconds(500);
+
+            var keysAlt = keys
+               .Where(key => key.Modifiers.HasFlag(ConsoleModifiers.Alt));
+
+            var twoKeyCombis =
+               from first in keysAlt
+               from second in keysAlt.Take(halfSec).Take(1)
+               select (First: first, Second: second);
+
+            var altKB =
+               from tpl in twoKeyCombis
+               where tpl.First.Key == ConsoleKey.K
+                  && tpl.Second.Key == ConsoleKey.B
+               select Unit(); // or select tpl
+
+            //using (keys.Select(k => Environment.NewLine + k.KeyChar).Trace("keys"))
+            //using (twoKeyCombis.Select(ks => $"{ks.Item1.KeyChar}-{ks.Item2.KeyChar}").Trace("twoKeyCombis"))
+            using (altKB.Trace("altKB"))
+                for (ConsoleKeyInfo key; (key = ReadKey()).Key != ConsoleKey.Q;)
+                    keys.OnNext(key);
+        }
+    }
+
+    static class Operators
+    {
+        public static void ScanEx()
+        {
+            IObservable<Transaction> transactions = null;
+
+            decimal initialBalance = 0;
+            IObservable<decimal> balance = transactions.Scan(initialBalance
+               , (bal, trans) => bal + trans.Amount);
+
+            IObservable<decimal> dipsIntoTheRed =
+               from bal in balance.PairWithPrevious()
+               where bal.Previous >= 0
+                  && bal.Current < 0
+               select bal.Current;
+
+
+            var dipsIntoRed = transactions
+               .GroupBy(t => t.AccountId)
+               .Select(DipsIntoTheRed)
+               .Merge();
+        }
+
+        public static IObservable<Guid> DipsIntoTheRed
+           (IGroupedObservable<Guid, Transaction> transactions)
+        {
+            Guid accountId = transactions.Key;
+            decimal initialBalance = 0;
+
+            var balance = transactions.Scan(initialBalance
+               , (bal, trans) => bal + trans.Amount);
+
+            return from bal in balance.PairWithPrevious()
+                   where bal.Previous >= 0
+                      && bal.Current < 0
+                   select accountId;
+        }
+
+        public static IObservable<T> MergeAll<T>
+           (this IObservable<IObservable<T>> source)
+           => source.SelectMany(x => x);
+    }
+
+    internal class Transaction
+    {
+        public Guid AccountId { get; }
+        public decimal Amount { get; }
+    }
 }

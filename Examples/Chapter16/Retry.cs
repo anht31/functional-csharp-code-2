@@ -17,11 +17,11 @@ namespace Examples.Chapter16
                from t in Retry(retries - 1, delayMillis * 2, start)
                select t);
 
-      public static Task<T> Retry<T>
+      public static async Task<T> Retry<T>
          (int retries, int delayMillis, Func<Task<T>> start)
          => retries == 0
-            ? start()
-            : start().OrElse(async () =>
+            ? await start()
+            : await start().OrElse(async () =>
             {
                await Task.Delay(delayMillis);
                return await Retry(retries - 1, delayMillis * 2, start);
@@ -29,7 +29,7 @@ namespace Examples.Chapter16
       
       public static void _main()
       {
-         Retry(10, 100, () => FxApi.GetRate("GBPUSD"));
+         var result = Retry(10, 100, () => FxApi.GetRate("GBPUSD"));
       }
    }
 }

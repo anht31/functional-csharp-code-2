@@ -87,10 +87,10 @@ namespace Examples.Chapter10.Linq
                       select a + b;
 
          // alternatively, any of the following
-         result = Int.Parse(s1).Bind(a => Int.Parse(s2).Map(b => a + b));
-         result = Int.Parse(s1).SelectMany(a => Int.Parse(s2), (a, b) => a + b);
-         result = Some(new Func<int, int, int>((a, b) => a + b))
-            .Apply(Int.Parse(s1)).Apply(Int.Parse(s2));
+         //result = Int.Parse(s1).Bind(a => Int.Parse(s2).Map(b => a + b));
+         //result = Int.Parse(s1).SelectMany(a => Int.Parse(s2), (a, b) => a + b);
+         //result = Some(new Func<int, int, int>((a, b) => a + b))
+         //   .Apply(Int.Parse(s1)).Apply(Int.Parse(s2));
 
          WriteLine(result.Match(
             Some: r => $"{s1} + {s2} = {r}",

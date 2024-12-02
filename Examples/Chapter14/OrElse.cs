@@ -17,9 +17,10 @@ namespace Examples.Chapter14
       private IRepository<T> cache;
       private IRepository<T> db;
 
-      public Option<T> Get(Guid id)
-         //=> cache.Get(id).OrElse(db.Get(id)); // eagerly gets from DB, defeating the purpose of having the cache
-         => cache.Get(id).OrElse(() => db.Get(id));
+        public Option<T> Get(Guid id)
+           //=> cache.Get(id).OrElse(db.Get(id)); // eagerly gets from DB, defeating the purpose of having the cache
+           //=> cache.Get(id).OrElse(() => db.Get(id));
+           => cache.Get(id) || db.Get(id);
    }
 
 

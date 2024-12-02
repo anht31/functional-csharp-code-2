@@ -15,96 +15,180 @@ using Boc.Commands;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Examples.Chapter12;
+using Examples.Chapter14;
+using Examples.Chapter7;
+using Microsoft.Extensions.Logging;
+using Examples.RandomState;
+using static Examples.RandomState.Gen;
+using Examples.Chapter16;
+using Examples.Agents;
+using Boc.Chapter9;
 
 namespace Examples;
 
+public class Child<T>
+{
+    public T t;
+}
+
+public class Parrent<TT>
+{
+    public Parrent()
+    {
+        var child = new Child<int>();
+
+        var otherChild = new Child<TT>();
+    }
+}
+
+public class ConsoleLogger : ILogger
+{
+    public IDisposable BeginScope<TState>(TState state)
+    {
+        return NullScope.Instance;
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return true;
+    }
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+    {
+        if (formatter == null)
+        {
+            throw new ArgumentNullException(nameof(formatter));
+        }
+
+        var message = formatter(state, exception);
+        WriteLine($"{logLevel}: {message}");
+
+        if (exception != null)
+        {
+            WriteLine($"{logLevel}: {exception}");
+        }
+    }
+}
+
+public class NullScope : IDisposable
+{
+    public static NullScope Instance { get; } = new NullScope();
+
+    public void Dispose()
+    {
+        // Do not thing
+    }
+}
+
+
 public class Program
 {
-   public async static Task Main(string[] args)
-   {
-      Boc.Chapter9.ValidationStrategies.Run();
-      ReadLine();
-      return;
 
-      var cliExamples = new Dictionary<string, Action>
-      {
-         ["ParallelSortUnsafe"] = Chapter1.MutationShouldBeAvoided.WithArrayItBreaks,
-         ["ParallelSortSafe"] = Chapter1.MutationShouldBeAvoided.WithIEnumerableItWorks,
-         ["NaivePar"] = Chapter3.ListFormatter.Parallel.Naive.ListFormatter.Run,
-         ["OptionBind"] = Chapter6.AskForValidAgeAndPrintFlatteringMessage.Run,
-         ["Greetings"] = Chapter9.Greetings.Run,
 
-         ["CurrencyLookup_Stateless"] = Chapter15.CurrencyLookup_Stateless.Run,
-         ["CurrencyLookup_StatefulUnsafe"] = Chapter15.CurrencyLookup_StatefulUnsafe.Run,
-         ["CurrencyLookup_StatefulSafe"] = Chapter15.CurrencyLookup_StatefulSafe.Run,
+    public async static Task Main(string[] args)
+    {
+        //var connectionString = "Server=localhost,1433;Database=LogDb;Integrated Security=SSPI;Persist Security Info=True;";
 
-         ["Timer"] = Chapter18.CreatingObservables.Timer.Run,
-         ["Subjects"] = Chapter18.CreatingObservables.Subjects.Run,
-         ["Create"] = Chapter18.CreatingObservables.Create.Run,
-         ["Generate"] = Chapter18.CreatingObservables.Generate.Run,
-         ["CurrencyLookup_Unsafe"] = Chapter18.CurrencyLookup_Unsafe.Run,
-         ["CurrencyLookup_Safe"] = Chapter18.CurrencyLookup_Safe.Run,
-         ["VoidContinuations"] = Chapter18.VoidContinuations.Run,
-         ["KeySequences"] = Chapter18.KeySequences.Run,
-      };
+        //var dbLogger = new DbLogger(connectionString, new ConsoleLogger());
+        //dbLogger.DeleteOldLogs();
 
-      if (args.Length > 0)
-         cliExamples.Lookup(args[0])
-            .Match(
-               None: () => Console.WriteLine($"Unknown option: '{args[0]}'"),
-               Some: (main) => main()
-            );
+        //ValidationStrategies.Run();
+        //Chapter4.AgeTest.Run();
 
-      else // StartWebApi()
-         await StartMinimalApi();
-   }
+        //var parrent = new Parrent<long>();
+        //WriteLine(parrent);
 
-   async static Task StartMinimalApi()
-   {
-      var app = WebApplication.Create();
+        //Examples.Chapter11.Usage.Run();
 
-      Chapter16.FxApi.Configure(app);
+        //Chapter15.CurrencyLookup_StatefulSafe.Run();
 
-      await app.RunAsync();
-   }
+        //Chapter18.KeySequences.Run03();
+        Chapter18.KeySequences.Run();
 
-   static void StartWebApi()
-      => Host
-         .CreateDefaultBuilder()
-         .ConfigureServices(services =>
-         {
-            services.AddControllers();
-            services.AddSwaggerGen();
 
-            // Chapter 3
-            // inject an interface
-            services.AddTransient<Chapter03.Boc.InjectInterface.IDateTimeService, Chapter03.Boc.InjectInterface.DefaultDateTimeService>();
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectInterface.DateNotPastValidator_Record>();
+        Console.ReadLine();
+        return;
 
-            // inject a value
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectValue.DateNotPastValidator>
-               (_ => new Chapter03.Boc.InjectValue.DateNotPastValidator(DateTime.UtcNow.Date));
+        var cliExamples = new Dictionary<string, Action>
+        {
+            ["ParallelSortUnsafe"] = Chapter1.MutationShouldBeAvoided.WithArrayItBreaks,
+            ["ParallelSortSafe"] = Chapter1.MutationShouldBeAvoided.WithIEnumerableItWorks,
+            ["NaivePar"] = Chapter3.ListFormatter.Parallel.Naive.ListFormatter.Run,
+            ["OptionBind"] = Chapter6.AskForValidAgeAndPrintFlatteringMessage.Run,
+            ["Greetings"] = Chapter9.Greetings.Run,
 
-            // inject a func
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectFunc.DateNotPastValidator>
-               (_ => new Chapter03.Boc.InjectFunc.DateNotPastValidator(() => DateTime.UtcNow.Date));
+            ["CurrencyLookup_Stateless"] = Chapter15.CurrencyLookup_Stateless.Run,
+            ["CurrencyLookup_StatefulUnsafe"] = Chapter15.CurrencyLookup_StatefulUnsafe.Run,
+            ["CurrencyLookup_StatefulSafe"] = Chapter15.CurrencyLookup_StatefulSafe.Run,
 
-            // inject a delegate
-            services.AddTransient<Chapter03.Boc.InjectDelegate.Clock>(_ => () => DateTime.UtcNow);
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectDelegate.DateNotPastValidator>();
-         })
-         .ConfigureWebHostDefaults(webBuilder => webBuilder.Configure(app =>
-         {
-            app.UseDeveloperExceptionPage()
-               .UseSwagger()
-               .UseSwaggerUI(swagger =>
-               {
-                  swagger.SwaggerEndpoint("v1/swagger.json", "Examples API");
-                  swagger.RoutePrefix = string.Empty;
-               })
-               .UseRouting()
-               .UseEndpoints(endpoints => endpoints.MapControllers());
-         }))
-         .Build()
-         .Run();
+            ["Timer"] = Chapter18.CreatingObservables.Timer.Run,
+            ["Subjects"] = Chapter18.CreatingObservables.Subjects.Run,
+            ["Create"] = Chapter18.CreatingObservables.Create.Run,
+            ["Generate"] = Chapter18.CreatingObservables.Generate.Run,
+            ["CurrencyLookup_Unsafe"] = Chapter18.CurrencyLookup_Unsafe.Run,
+            ["CurrencyLookup_Safe"] = Chapter18.CurrencyLookup_Safe.Run,
+            ["VoidContinuations"] = Chapter18.VoidContinuations.Run,
+            ["KeySequences"] = Chapter18.KeySequences.Run,
+        };
+
+        if (args.Length > 0)
+            cliExamples.Lookup(args[0])
+               .Match(
+                  None: () => Console.WriteLine($"Unknown option: '{args[0]}'"),
+                  Some: (main) => main()
+               );
+
+        else // StartWebApi()
+            await StartMinimalApi();
+    }
+
+    async static Task StartMinimalApi()
+    {
+        var app = WebApplication.Create();
+
+        Chapter16.FxApi.Configure(app);
+
+        await app.RunAsync();
+    }
+
+    static void StartWebApi()
+       => Host
+          .CreateDefaultBuilder()
+          .ConfigureServices(services =>
+          {
+              services.AddControllers();
+              services.AddSwaggerGen();
+
+              // Chapter 3
+              // inject an interface
+              services.AddTransient<Chapter03.Boc.InjectInterface.IDateTimeService, Chapter03.Boc.InjectInterface.DefaultDateTimeService>();
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectInterface.DateNotPastValidator_Record>();
+
+              // inject a value
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectValue.DateNotPastValidator>
+                (_ => new Chapter03.Boc.InjectValue.DateNotPastValidator(DateTime.UtcNow.Date));
+
+              // inject a func
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectFunc.DateNotPastValidator>
+                (_ => new Chapter03.Boc.InjectFunc.DateNotPastValidator(() => DateTime.UtcNow.Date));
+
+              // inject a delegate
+              services.AddTransient<Chapter03.Boc.InjectDelegate.Clock>(_ => () => DateTime.UtcNow);
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectDelegate.DateNotPastValidator>();
+          })
+          .ConfigureWebHostDefaults(webBuilder => webBuilder.Configure(app =>
+          {
+              app.UseDeveloperExceptionPage()
+                .UseSwagger()
+                .UseSwaggerUI(swagger =>
+                {
+                    swagger.SwaggerEndpoint("v1/swagger.json", "Examples API");
+                    swagger.RoutePrefix = string.Empty;
+                })
+                .UseRouting()
+                .UseEndpoints(endpoints => endpoints.MapControllers());
+          }))
+          .Build()
+          .Run();
 }

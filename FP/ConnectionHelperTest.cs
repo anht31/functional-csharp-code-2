@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,8 +73,8 @@ public class ConnectionHelperTest
         var queryByLastName = conn.Retrieve<Employee>(sqlByName);
 
         // lookupEmployee: Guid -> Option<Employee>
-        Option<Employee> lookupEmployee(Guid id)
-            => queryById(new { Id = id }).SingleOrDefault();
+        //Option<Employee> lookupEmployee(Guid id)
+        //    => queryById(new { Id = id }).SingleOrDefault();
 
         // findEmloyeesByLastName : string -> IEnumerable<Employee>
         IEnumerable<Employee> findEmployeesByLastName(string lastName)

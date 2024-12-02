@@ -45,7 +45,9 @@ namespace Examples.Chapter6
          // => [33, 37]
 
          var averageAge = statedAges.Average(a => a.Value);
-         // => 35
+            // => 35
+
+            var averageAge2 = statedAges.Map(age => age.Value).Average();
       }
    }
 }

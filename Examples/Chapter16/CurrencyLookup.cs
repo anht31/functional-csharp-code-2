@@ -23,7 +23,7 @@ namespace Examples.Chapter16
       }
    }
 
-   static class RatesApi
+   public static class RatesApi
    {
       // get your own key if my free trial has expired
       const string ApiKey = "1a2419e081f5940872d5700f";

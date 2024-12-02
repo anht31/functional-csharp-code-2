@@ -7,98 +7,127 @@ using static LaYumba.Functional.F;
 
 namespace Examples.Chapter16
 {
-   using static Instrumentation;
-   using static Enumerable;
+    using static Instrumentation;
+    using static Enumerable;
 
-   public class Applicative
-   {
-      public static void _main()
-      {
-         Range(1, 2).ForEach(_ => // do a few rounds to get ; the first is always penalized
-         {
-            Time("a + b", () =>
-               (from a in Return(300, "a")
-                from b in Return(500, "b")
-                select a + b).Result
-               );
-
-            Time("c + d", () =>
-               Return(300, "c").
-               Map<string, string, string>((l, r) => l + r).
-               Apply(Return(500, "d")).Result);
-         });
-         
-         Time("Applicative Traverse", () => // takes ~500 ms
-            Range(1, 5).TraverseA(async i =>
+    public class Applicative
+    {
+        public static void _main()
+        {
+            Range(1, 2).ForEach(_ => // do a few rounds to get ; the first is always penalized
             {
-               await Task.Delay(i * 100);
-               return i;
-            })
-            .Map(xs => xs.Sum())
-            .Result);
+                Time("a + b", () =>
+                (from a in Return(300, "a")
+                   from b in Return(500, "b")
+                   select a + b).Result
+                );
 
-         Time("Monadic Traverse", () => // takes ~1500 ms
-            Range(1, 5).TraverseM(async i =>
+                Time("c + d", () =>
+                Return(300, "c").
+                Map<string, string, string>((l, r) => l + r).
+                Apply(Return(500, "d")).Result);
+            });
+
+            Time("Applicative Traverse", () => // takes ~500 ms
+               Range(1, 5).TraverseA(async i =>
+               {
+                   await Task.Delay(i * 100);
+                   return i;
+               })
+               .Map(xs => xs.Sum())
+               .Result);
+
+            Time("Monadic Traverse", () => // takes ~1500 ms
+               Range(1, 5).TraverseM(async i =>
+               {
+                   await Task.Delay(i * 100);
+                   return i;
+               })
+               .Map(xs => xs.Sum())
+               .Result);
+        }
+
+        static async Task<string> Return(int delay, string val)
+        {
+            await Task.Delay(delay);
+            return val;
+        }
+
+        interface Airline
+        {
+            Task<Flight> BestFare(string from, string to, DateTime on);
+            Task<IEnumerable<Flight>> Flights(string from, string to, DateTime on);
+        }
+
+        public class Ryanair : Airline
+        {
+            public async Task<Flight> BestFare(string from, string to, DateTime on)
             {
-               await Task.Delay(i * 100);
-               return i;
-            })
-            .Map(xs => xs.Sum())
-            .Result);
-      }
+                await Task.Delay(3000);
+                return new Flight { Price = 2 };
+            }
 
-      static async Task<string> Return(int delay, string val)
-      {
-         await Task.Delay(delay);
-         return val;
-      }
+            Task<IEnumerable<Flight>> Airline.Flights(string from, string to, DateTime on)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-      interface Airline
-      {
-         Task<Flight> BestFare(string from, string to, DateTime on);
-         Task<IEnumerable<Flight>> Flights(string from, string to, DateTime on);
-      }
+        public class Easyjet : Airline
+        {
+            public async Task<Flight> BestFare(string from, string to, DateTime on)
+            {
+                await Task.Delay(3000);
+                return new Flight { Price = 1 };
+            }
 
-      Airline ryanair;
-      Airline easyjet;
+            Task<IEnumerable<Flight>> Airline.Flights(string from, string to, DateTime on)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
-      Task<Flight> BestFareM(string @from, string to, DateTime @on)
-         => from r in ryanair.BestFare(@from, to, @on)
-            from e in easyjet.BestFare(@from, to, @on)
-            select r.Price < e.Price ? r : e;
 
-      Task<Flight> BestFareA(string from, string to, DateTime on)
-      {
-         var pickCheaper = (Flight l, Flight r)
-            => l.Price < r.Price ? l : r;
+        Ryanair ryanair = new Ryanair();
+        Easyjet easyjet = new Easyjet();
 
-         return Async(pickCheaper)
-            .Apply(ryanair.BestFare(from, to, on))
-            .Apply(easyjet.BestFare(from, to, on));
-      }
-         
-      async Task<IEnumerable<Flight>> Search(IEnumerable<Airline> airlines
-         , string from, string to, DateTime on)
-      {
-         //var results = await airlines.Traverse(a => a.Flights(from, to, on).Recover(ex => Empty<Flight>()));
-         var results = await airlines.Traverse(SafelySearch(from, to, on));
-         return results.Flatten().OrderBy(f => f.Price);
-      }
+        Task<Flight> BestFareM(string @from, string to, DateTime @on)
+           => from r in ryanair.BestFare(@from, to, @on)
+              from e in easyjet.BestFare(@from, to, @on)
+              select r.Price < e.Price ? r : e;
 
-      Func<Airline, Task<IEnumerable<Flight>>> SafelySearch
-         (string from, string to, DateTime on)
-         => airline
-         => airline.Flights(from, to, on)
-                   .Recover(ex => Empty<Flight>());
+        public Task<Flight> BestFareA(string from, string to, DateTime on)
+        {
+            var pickCheaper = (Flight l, Flight r)
+               => l.Price < r.Price ? l : r;
 
-      Task<IEnumerable<Flight>> _Search(IEnumerable<Airline> airlines
-         , string @from, string to, DateTime @on)
-         => from results in airlines.Traverse(a => a.Flights(@from, to, @on))
-            select results.Flatten().OrderBy(f => f.Price).AsEnumerable();
+            return Async(pickCheaper)
+               .Apply(ryanair.BestFare(from, to, on))
+               .Apply(easyjet.BestFare(from, to, on));
+        }
 
-      class Flight
-      {
-         public decimal Price { get; set; }
-      }
-   }
+        async Task<IEnumerable<Flight>> Search(IEnumerable<Airline> airlines
+           , string from, string to, DateTime on)
+        {
+            //var results = await airlines.Traverse(a => a.Flights(from, to, on).Recover(ex => Empty<Flight>()));
+            var results = await airlines.Traverse(SafelySearch(from, to, on));
+            return results.Flatten().OrderBy(f => f.Price);
+        }
+
+        Func<Airline, Task<IEnumerable<Flight>>> SafelySearch
+           (string from, string to, DateTime on)
+           => airline
+           => airline.Flights(from, to, on)
+                     .Recover(ex => Empty<Flight>());
+
+        Task<IEnumerable<Flight>> _Search(IEnumerable<Airline> airlines
+           , string @from, string to, DateTime @on)
+           => from results in airlines.Traverse(a => a.Flights(@from, to, @on))
+              select results.Flatten().OrderBy(f => f.Price).AsEnumerable();
+
+        public class Flight
+        {
+            public decimal Price { get; set; }
+        }
+    }
 }

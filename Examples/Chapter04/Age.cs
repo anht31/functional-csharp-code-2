@@ -7,6 +7,16 @@ namespace Examples
 
 namespace Examples.Chapter4
 {
+    public static class AgeTest
+    {
+        public static void Run()
+        {
+            var age = new Age(60);
+            var result = RiskCalculator.CalculateRiskProfile(age);
+        }
+    }
+
+
    public static class RiskCalculator
    {
       // dynamic type (anything goes)
@@ -37,7 +47,7 @@ namespace Examples.Chapter4
    {
       private int Value { get; }
 
-      private Age(int value)
+      public Age(int value)
       {
          if (!IsValid(value))
             throw new ArgumentException($"{value} is not a valid age");

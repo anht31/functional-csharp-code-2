@@ -8,7 +8,7 @@ namespace Examples.Chapter18
    {
       public static IDisposable Trace<T>(this IObservable<T> source, string name)
          => source.Subscribe(
-            onNext: val => WriteLine($"{name} -> {val}"),
+            onNext: val => WriteLine($"{name} -> {val} -> {source}"),
             onError: ex => WriteLine($"{name} ERROR: {ex.Message}"),
             onCompleted: () => WriteLine($"{name} END"));
    }

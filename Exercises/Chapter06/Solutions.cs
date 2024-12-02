@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+//using Exercises.Chapter6Exercises;
 using LaYumba.Functional;
 using static LaYumba.Functional.F;
 
@@ -80,3 +81,18 @@ namespace Exercises.Chapter6.Solutions
          => (end - start).Days / 365d;
    }
 }
+
+public record Employee
+(
+   string Id,
+   Option<WorkPermit> WorkPermit,
+
+   DateTime JoinedOn,
+   Option<DateTime> LeftOn
+);
+
+public record WorkPermit
+(
+   string Number,
+   DateTime Expiry
+);

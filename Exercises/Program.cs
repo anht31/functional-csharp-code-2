@@ -7,8 +7,9 @@ namespace Exercises
    {
       public static void Main(string[] args)
       {
-         // run the program you've written, for example:
-         Chapter3.Solutions.Bmi.Run();
+            // run the program you've written, for example:
+
+            Exercises.Chapter12.Exercises.Run();
       }
    }
 }

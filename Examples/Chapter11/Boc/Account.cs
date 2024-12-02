@@ -30,11 +30,11 @@ namespace Examples.Chapter11
       IEnumerable<Transaction> TransactionHistory = null
    )
    {
-      // use a read-only property to disallow "updating" the currency of an account
-      public CurrencyCode Currency { get; } = Currency;
+        // use a read-only property to disallow "updating" the currency of an account
+        public CurrencyCode Currency { get; } = Currency;
 
-      // use a property initializer to use an empty list rather than null
-      public IEnumerable<Transaction> TransactionHistory { get; init; }
+        // use a property initializer to use an empty list rather than null
+        public IEnumerable<Transaction> TransactionHistory { get; init; }
          = TransactionHistory?.ToImmutableList()
             ?? Enumerable.Empty<Transaction>();
    }
@@ -63,6 +63,13 @@ namespace Examples.Chapter11
 
    public static class Usage
    {
+        public static void Run()
+        {
+            var a = new AccountState("USD");
+            a.TransactionHistory.Prepend(new Transaction(50, "New customer offer", DateTime.Now));
+            WriteLine(a.TransactionHistory.Count());
+        }
+
       public static void AccountUsage()
       {
          var onDayOne = Account.Create("USD");

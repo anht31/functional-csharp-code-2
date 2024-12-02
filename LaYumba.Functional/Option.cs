@@ -42,9 +42,9 @@ namespace LaYumba.Functional
          if (isSome) yield return value!;
       }
 
-      public static bool operator true(Option<T> @this) => @this.isSome;
-      public static bool operator false(Option<T> @this) => @this.isNone;
-      public static Option<T> operator | (Option<T> l, Option<T> r) => l.isSome ? l : r;
+        public static bool operator true(Option<T> @this) => @this.isSome;
+        public static bool operator false(Option<T> @this) => @this.isNone;
+        public static Option<T> operator | (Option<T> l, Option<T> r) => l.isSome ? l : r;
 
       // equality operators
 
@@ -121,7 +121,7 @@ namespace LaYumba.Functional
       public static Option<Unit> ForEach<T>(this Option<T> @this, Action<T> action)
          => Map(@this, action.ToFunc());
 
-      public static Option<R> Map<T, R>
+        public static Option<R> Map<T, R>
          (this NoneType _, Func<T, R> f)
          => None;
 

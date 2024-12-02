@@ -34,10 +34,10 @@ namespace Examples.Chapter18
 
          var outputs = from r in rates select r.ToString();
 
-         using (inputs.Trace("inputs"))
-         using (rates.Trace("rates"))
-         using (outputs.Trace("outputs")) 
-            for (string input; (input = ReadLine().ToUpper()) != "Q";)
+            //using (inputs.Trace("inputs"))
+            //using (rates.Trace("rates"))
+            using (outputs.Trace("outputs"))
+                for (string input; (input = ReadLine().ToUpper()) != "Q";)
                inputs.OnNext(input);
       }
    } 

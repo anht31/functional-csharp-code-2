@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.90" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <ProjectReference Include="..\Exercises\Exercises.csproj" />
+    <ProjectReference Include="..\LaYumba.Functional\LaYumba.Functional.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LaYumba.Functional\LaYumba.Functional.csproj" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
-  
+
 </Project>
