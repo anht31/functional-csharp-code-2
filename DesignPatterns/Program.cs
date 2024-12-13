@@ -5,6 +5,8 @@
 //new AbstractFactory.App().Startup();
 //new FactoryMethod_To_AbstractFactory.App().Startup();
 //Prototype.App.Run();
-new Command.App().Run();
+//new Iterator.App().Run();
+//new MementoNested.App().Run();
+ExampleMementoStricter.Program.Main(Array.Empty<string>());
 
 Console.ReadLine();

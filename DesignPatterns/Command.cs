@@ -4,7 +4,6 @@ namespace Command;
 public interface ICommand {
     public void Execute();
 }
-
 public class SimpleCommand : ICommand {
     private string _payload = string.Empty;
     public SimpleCommand(string payload) => this._payload = payload;
