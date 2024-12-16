@@ -7,6 +7,8 @@
 //Prototype.App.Run();
 //new Iterator.App().Run();
 //new MementoNested.App().Run();
-ExampleMementoStricter.Program.Main(Array.Empty<string>());
+//ExampleMementoStricter.Program.Main(Array.Empty<string>());
+//new Observer.App().Run();
+new DoubleDispatchVisitor.App().Run();
 
 Console.ReadLine();
