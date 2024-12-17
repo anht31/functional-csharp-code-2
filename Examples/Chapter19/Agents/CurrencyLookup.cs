@@ -8,106 +8,111 @@ using Examples.Chapter16;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Examples.Agents
+namespace Examples.Agents;
+
+using CcyAgents = ImmutableDictionary<string, Agent<string>>;
+
+public static class CurrencyLookup
 {
-   using CcyAgents = ImmutableDictionary<string, Agent<string>>;
+    record FxRateRequest
+    (
+       string CcyPair,
+       string Sender // the sender, to which the response should be sent
+    );
 
-   public static class CurrencyLookup
-   {
-      record FxRateRequest
-      (
-         string CcyPair,
-         string Sender // the sender, to which the response should be sent
-      );
+    record FxRateResponse
+    (
+       string CcyPair,
+       decimal Rate,
+       string Recipient
+    );
 
-      record FxRateResponse
-      (
-         string CcyPair,
-         decimal Rate,
-         string Recipient
-      );
+    public static void SetUp(MessageBroker broker)
+    {
+        var sendResponse = Agent.Start(
+           (FxRateResponse res) => broker.Send(res.Recipient, res));
 
-      public static void SetUp(MessageBroker broker)
-      {
-         var sendResponse = Agent.Start(
-            (FxRateResponse res) => broker.Send(res.Recipient, res));
+        var processRequest = StartReqProcessor(sendResponse);
 
-         var processRequest = StartReqProcessor(sendResponse);
+        broker.Subscribe<FxRateRequest>("FxRateRequests", processRequest.Tell); // when a request is received, pass it to the processing agent
+    }                                                                          // here we go from multithreaded to sequential
 
-         broker.Subscribe<FxRateRequest>("FxRateRequests", processRequest.Tell); // when a request is received, pass it to the processing agent
-      }                                                                          // here we go from multithreaded to sequential
+    // processFunc: (state, mesage) -> state
+    static Agent<FxRateRequest> StartReqProcessor(Agent<FxRateResponse> sendResponse)
+       => Agent.Start(CcyAgents.Empty, (CcyAgents state, FxRateRequest request) =>
+       {
+           string ccyPair = request.CcyPair;
 
-      static Agent<FxRateRequest> StartReqProcessor(Agent<FxRateResponse> sendResponse)
-         => Agent.Start(CcyAgents.Empty, (CcyAgents state, FxRateRequest request) =>
-         {
-            string ccyPair = request.CcyPair;
+           Agent<string> agent = state
+            .Lookup(ccyPair)
+            .GetOrElse(() => StartAgentFor(ccyPair, sendResponse));
 
-            Agent<string> agent = state
-               .Lookup(ccyPair)
-               .GetOrElse(() => StartAgentFor(ccyPair, sendResponse));
+           agent.Tell(request.Sender);
+           return state.Add(ccyPair, agent);
+       });
 
-            agent.Tell(request.Sender);
-            return state.Add(ccyPair, agent);
-         });
+    static Agent<string> StartAgentFor
+       (string ccyPair, Agent<FxRateResponse> sendResponse)
+       => Agent.Start<Option<decimal>, string>
+       (
+          initialState: None,
+          process: async (optRate, recipient) =>
+          {
+              decimal rate = await optRate.Map(Async)
+               .GetOrElse(() => RatesApi.GetRateAsync(ccyPair));
 
-      static Agent<string> StartAgentFor
-         (string ccyPair, Agent<FxRateResponse> sendResponse)
-         => Agent.Start<Option<decimal>, string>
-         (
-            initialState: None,
-            process: async (optRate, recipient) =>
-            {
-               decimal rate = await optRate.Map(Async)
-                  .GetOrElse(() => RatesApi.GetRateAsync(ccyPair));
+              sendResponse.Tell(new FxRateResponse
+                (
+                   CcyPair: ccyPair,
+                   Rate: rate,
+                   Recipient: recipient
+                ));
 
-               sendResponse.Tell(new FxRateResponse
-               (
-                  CcyPair: ccyPair,
-                  Rate: rate,
-                  Recipient: recipient
-               ));
-
-               return Some(rate);
-            }
-         );
+              return Some(rate);
+          }
+       );
 
 
-      // test methods
+    // test methods
 
-      public static void TestViaCmdLine()
-      {
-         var sendResponse = Agent.Start((FxRateResponse res)
-            => WriteLine($"{res.CcyPair}: {res.Rate}"));
+    public static void TestViaCmdLine()
+    {
+        var sendResponse = Agent.Start((FxRateResponse res)
+           => WriteLine($"{res.CcyPair}: {res.Rate}"));
 
-         var rateLookup = StartReqProcessor(sendResponse);
+        var rateLookup = StartReqProcessor(sendResponse);
 
-         WriteLine("Enter a currency pair like 'EURUSD' to get a quote, or 'q' to quit");
-         for (string input; (input = ReadLine().ToUpper()) != "Q";)
+        WriteLine("Enter a currency pair like 'EURUSD' to get a quote, or 'q' to quit");
+        for (string input; (input = ReadLine().ToUpper()) != "Q";)
             rateLookup.Tell(new FxRateRequest(CcyPair: input, Sender: "Sender"));
-      }
+    }
 
-      public static void TestConcurrencyWorksOk()
-      {
-         var sendResponse = Agent.Start((FxRateResponse res)
-            => WriteLine($"{res.CcyPair}: {res.Rate}"));
+    public static void TestConcurrencyWorksOk()
+    {
+        var sendResponse = Agent.Start((FxRateResponse res)
+           => WriteLine($"{res.CcyPair}: {res.Rate}"));
 
-         var rateLookup = StartReqProcessor(sendResponse);
+        var rateLookup = StartReqProcessor(sendResponse);
 
-         Parallel.ForEach(Range(1, 10000)
-            , i => rateLookup.Tell(new FxRateRequest(i % 2 == 0 ? "EURUSD" : "GBPUSD", "Sender")));
-         Task.Delay(10000).Wait();
-      }
-   }
+        Parallel.ForEach(Range(1, 10000)
+           , i => rateLookup.Tell(new FxRateRequest(i % 2 == 0 ? "EURUSD" : "GBPUSD", "Sender")));
+        Task.Delay(10000).Wait();
+    }
+}
 
-   // simple implementation using Redis
-   public class MessageBroker
-   {
-      ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
+// simple implementation using Redis
+public class MessageBroker
+{
+    ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
 
-      public void Subscribe<T>(string channel, Action<T> act)
-         => redis.GetSubscriber().Subscribe(channel, (_, val) => act(JsonConvert.DeserializeObject<T>(val)));
+    // Listen message published by the Channel
+    // When message sent to channel, callback 'act' will be active,
+    // add message will be deserialize to T type, before passing to the 'act' function
+    public void Subscribe<T>(string channel, Action<T> act)
+       => redis.GetSubscriber().Subscribe(channel, (_, val) => act(JsonConvert.DeserializeObject<T>(val)));
 
-      public void Send(string channel, object message)
-         => redis.GetDatabase(0).PublishAsync(channel, JsonConvert.SerializeObject(message));
-   }
+    // Send mesage to one channel
+    // serialize mesage to JSON, and send it to the chanel
+    public void Send(string channel, object message)
+       => redis.GetDatabase(0).PublishAsync(channel, JsonConvert.SerializeObject(message));
 }

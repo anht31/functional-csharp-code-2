@@ -9,6 +9,13 @@ namespace Examples.Chapter14
 {
    public class TryTests
    {
+        public void RunTest()
+        {
+            var tryUrl = CreateUri("http://github.com/2");
+            var result = tryUrl.Run();
+            WriteLine(result);
+        }
+
       Exceptional<Uri> Boilerplate_CreateUri(string uri)
       {
          try { return new Uri(uri); }
@@ -34,7 +41,8 @@ namespace Examples.Chapter14
          => Parse<Website>(json)
             .Bind(website => CreateUri(website.Uri));
 
-      Try<Uri> CreateUri(string uri) => () => new Uri(uri);
+      Func<string, Try<Uri>> CreateUri = uri => () => new Uri(uri);
+        Try<Uri> CreateUriFunc(string uri) => () => new Uri(uri);
 
       Try<T> Parse<T>(string s) => () => JsonSerializer.Deserialize<T>(s);
 

@@ -346,9 +346,12 @@ namespace Examples.StateEx
          public StatefulComputation<int, Tree<Numbered<T>>> Number<T>(Tree<T> tree)
             => tree.Match(
 
-            Leaf: leaf =>
-               from count in GetAndIncrement // put the current counter value into count, while incrementing the count
-               select Leaf(new Numbered<T>(leaf, count)), // the leaf value, numbered with the current count value
+            Leaf: 
+                leaf => GetAndIncrement.Select(
+                    count => Leaf(new Numbered<T>(leaf, count))
+                ),
+               //from count in GetAndIncrement // put the current counter value into count, while incrementing the count
+               //select Leaf(new Numbered<T>(leaf, count)), // the leaf value, numbered with the current count value
 
             Branch: (left, right) =>
                from newLeft in Number(left)
@@ -372,7 +375,7 @@ namespace Examples.StateEx
 
       #endregion // "monadically labeled tree"
 
-      static void _main(string[] args)
+      public static void _main(string[] args)
       {
          Console.WriteLine("Unlabeled Tree:");
          var t = Branch
@@ -390,20 +393,20 @@ namespace Examples.StateEx
          );
          Console.WriteLine(t);
 
-         Console.WriteLine();
-         Console.WriteLine("Non-monadically Labeled Tree:");
-         var t1 = new TreeNumbering1().Number<string>(t, 0);
-         Console.WriteLine(t1.Item1);
+         //Console.WriteLine();
+         //Console.WriteLine("Non-monadically Labeled Tree:");
+         //var t1 = new TreeNumbering1().Number<string>(t, 0);
+         //Console.WriteLine(t1.Item1);
 
          Console.WriteLine();
          Console.WriteLine("LINQ Labeled Tree:");
          var t3 = new TreeNumbering3().Number(t)(0).Value;
          Console.WriteLine(t3);
 
-         Console.WriteLine();
-         Console.WriteLine("State get/set Labeled Tree:");
-         var t4 = new TreeNumbering4().NumberTree(t)(0).Value;
-         Console.WriteLine(t4);
+         //Console.WriteLine();
+         //Console.WriteLine("State get/set Labeled Tree:");
+         //var t4 = new TreeNumbering4().NumberTree(t)(0).Value;
+         //Console.WriteLine(t4);
 
          Console.WriteLine();
          Console.ReadKey();

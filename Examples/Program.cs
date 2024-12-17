@@ -15,96 +15,101 @@ using Boc.Commands;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Examples.Chapter14;
 
 namespace Examples;
 
 public class Program
 {
-   public async static Task Main(string[] args)
-   {
-      Boc.Chapter9.ValidationStrategies.Run();
-      ReadLine();
-      return;
+    public async static Task Main(string[] args)
+    {
+        //var dbLog = new DbLogger();
+        //new Examples.Chapter14.TryTests().RunTest();
+        //Examples.StateEx.State_Number_Tree._main([]);
+        Examples.Agents.CurrencyLookup.TestViaCmdLine();
 
-      var cliExamples = new Dictionary<string, Action>
-      {
-         ["ParallelSortUnsafe"] = Chapter1.MutationShouldBeAvoided.WithArrayItBreaks,
-         ["ParallelSortSafe"] = Chapter1.MutationShouldBeAvoided.WithIEnumerableItWorks,
-         ["NaivePar"] = Chapter3.ListFormatter.Parallel.Naive.ListFormatter.Run,
-         ["OptionBind"] = Chapter6.AskForValidAgeAndPrintFlatteringMessage.Run,
-         ["Greetings"] = Chapter9.Greetings.Run,
+        ReadLine();
+        return;
 
-         ["CurrencyLookup_Stateless"] = Chapter15.CurrencyLookup_Stateless.Run,
-         ["CurrencyLookup_StatefulUnsafe"] = Chapter15.CurrencyLookup_StatefulUnsafe.Run,
-         ["CurrencyLookup_StatefulSafe"] = Chapter15.CurrencyLookup_StatefulSafe.Run,
+        var cliExamples = new Dictionary<string, Action>
+        {
+            ["ParallelSortUnsafe"] = Chapter1.MutationShouldBeAvoided.WithArrayItBreaks,
+            ["ParallelSortSafe"] = Chapter1.MutationShouldBeAvoided.WithIEnumerableItWorks,
+            ["NaivePar"] = Chapter3.ListFormatter.Parallel.Naive.ListFormatter.Run,
+            ["OptionBind"] = Chapter6.AskForValidAgeAndPrintFlatteringMessage.Run,
+            ["Greetings"] = Chapter9.Greetings.Run,
 
-         ["Timer"] = Chapter18.CreatingObservables.Timer.Run,
-         ["Subjects"] = Chapter18.CreatingObservables.Subjects.Run,
-         ["Create"] = Chapter18.CreatingObservables.Create.Run,
-         ["Generate"] = Chapter18.CreatingObservables.Generate.Run,
-         ["CurrencyLookup_Unsafe"] = Chapter18.CurrencyLookup_Unsafe.Run,
-         ["CurrencyLookup_Safe"] = Chapter18.CurrencyLookup_Safe.Run,
-         ["VoidContinuations"] = Chapter18.VoidContinuations.Run,
-         ["KeySequences"] = Chapter18.KeySequences.Run,
-      };
+            ["CurrencyLookup_Stateless"] = Chapter15.CurrencyLookup_Stateless.Run,
+            ["CurrencyLookup_StatefulUnsafe"] = Chapter15.CurrencyLookup_StatefulUnsafe.Run,
+            ["CurrencyLookup_StatefulSafe"] = Chapter15.CurrencyLookup_StatefulSafe.Run,
 
-      if (args.Length > 0)
-         cliExamples.Lookup(args[0])
-            .Match(
-               None: () => Console.WriteLine($"Unknown option: '{args[0]}'"),
-               Some: (main) => main()
-            );
+            ["Timer"] = Chapter18.CreatingObservables.Timer.Run,
+            ["Subjects"] = Chapter18.CreatingObservables.Subjects.Run,
+            ["Create"] = Chapter18.CreatingObservables.Create.Run,
+            ["Generate"] = Chapter18.CreatingObservables.Generate.Run,
+            ["CurrencyLookup_Unsafe"] = Chapter18.CurrencyLookup_Unsafe.Run,
+            ["CurrencyLookup_Safe"] = Chapter18.CurrencyLookup_Safe.Run,
+            ["VoidContinuations"] = Chapter18.VoidContinuations.Run,
+            ["KeySequences"] = Chapter18.KeySequences.Run,
+        };
 
-      else // StartWebApi()
-         await StartMinimalApi();
-   }
+        if (args.Length > 0)
+            cliExamples.Lookup(args[0])
+               .Match(
+                  None: () => Console.WriteLine($"Unknown option: '{args[0]}'"),
+                  Some: (main) => main()
+               );
 
-   async static Task StartMinimalApi()
-   {
-      var app = WebApplication.Create();
+        else // StartWebApi()
+            await StartMinimalApi();
+    }
 
-      Chapter16.FxApi.Configure(app);
+    async static Task StartMinimalApi()
+    {
+        var app = WebApplication.Create();
 
-      await app.RunAsync();
-   }
+        Chapter16.FxApi.Configure(app);
 
-   static void StartWebApi()
-      => Host
-         .CreateDefaultBuilder()
-         .ConfigureServices(services =>
-         {
-            services.AddControllers();
-            services.AddSwaggerGen();
+        await app.RunAsync();
+    }
 
-            // Chapter 3
-            // inject an interface
-            services.AddTransient<Chapter03.Boc.InjectInterface.IDateTimeService, Chapter03.Boc.InjectInterface.DefaultDateTimeService>();
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectInterface.DateNotPastValidator_Record>();
+    static void StartWebApi()
+       => Host
+          .CreateDefaultBuilder()
+          .ConfigureServices(services =>
+          {
+              services.AddControllers();
+              services.AddSwaggerGen();
 
-            // inject a value
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectValue.DateNotPastValidator>
-               (_ => new Chapter03.Boc.InjectValue.DateNotPastValidator(DateTime.UtcNow.Date));
+              // Chapter 3
+              // inject an interface
+              services.AddTransient<Chapter03.Boc.InjectInterface.IDateTimeService, Chapter03.Boc.InjectInterface.DefaultDateTimeService>();
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectInterface.DateNotPastValidator_Record>();
 
-            // inject a func
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectFunc.DateNotPastValidator>
-               (_ => new Chapter03.Boc.InjectFunc.DateNotPastValidator(() => DateTime.UtcNow.Date));
+              // inject a value
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectValue.DateNotPastValidator>
+                (_ => new Chapter03.Boc.InjectValue.DateNotPastValidator(DateTime.UtcNow.Date));
 
-            // inject a delegate
-            services.AddTransient<Chapter03.Boc.InjectDelegate.Clock>(_ => () => DateTime.UtcNow);
-            services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectDelegate.DateNotPastValidator>();
-         })
-         .ConfigureWebHostDefaults(webBuilder => webBuilder.Configure(app =>
-         {
-            app.UseDeveloperExceptionPage()
-               .UseSwagger()
-               .UseSwaggerUI(swagger =>
-               {
-                  swagger.SwaggerEndpoint("v1/swagger.json", "Examples API");
-                  swagger.RoutePrefix = string.Empty;
-               })
-               .UseRouting()
-               .UseEndpoints(endpoints => endpoints.MapControllers());
-         }))
-         .Build()
-         .Run();
+              // inject a func
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectFunc.DateNotPastValidator>
+                (_ => new Chapter03.Boc.InjectFunc.DateNotPastValidator(() => DateTime.UtcNow.Date));
+
+              // inject a delegate
+              services.AddTransient<Chapter03.Boc.InjectDelegate.Clock>(_ => () => DateTime.UtcNow);
+              services.AddTransient<IValidator<MakeTransfer>, Chapter03.Boc.InjectDelegate.DateNotPastValidator>();
+          })
+          .ConfigureWebHostDefaults(webBuilder => webBuilder.Configure(app =>
+          {
+              app.UseDeveloperExceptionPage()
+                .UseSwagger()
+                .UseSwaggerUI(swagger =>
+                {
+                    swagger.SwaggerEndpoint("v1/swagger.json", "Examples API");
+                    swagger.RoutePrefix = string.Empty;
+                })
+                .UseRouting()
+                .UseEndpoints(endpoints => endpoints.MapControllers());
+          }))
+          .Build()
+          .Run();
 }
