@@ -1,5 +1,5 @@
 ﻿using static System.Console;
-namespace Observer;
+namespace DesignPatterns.Study.Observer;
 
 class Publisher
 {
@@ -11,22 +11,27 @@ class Publisher
     public void UnSubcribe(ISubscriber subcriber) => subsribers.Remove(subcriber);
 }
 
-public interface ISubscriber {
+public interface ISubscriber
+{
     void Update(string message);
 }
-class SubscriberA : ISubscriber {
+class SubscriberA : ISubscriber
+{
     public void Update(string message) => WriteLine($"SubscriberA get notify about: {message}");
 }
-class SubscriberB : ISubscriber {
+class SubscriberB : ISubscriber
+{
     public void Update(string message) => WriteLine($"SubscriberB get notify about: {message}");
 }
-class SubscriberC : ISubscriber {
+class SubscriberC : ISubscriber
+{
     public void Update(string message) => WriteLine($"SubscriberC get notify about: {message}");
 }
 
 class App
 {
-    public void Run() {
+    public void Run()
+    {
         var a = new SubscriberA();
         var b = new SubscriberB();
         var c = new SubscriberC();

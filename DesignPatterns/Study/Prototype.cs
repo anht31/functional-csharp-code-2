@@ -1,7 +1,5 @@
-﻿namespace Prototype;
+﻿namespace DesignPatterns.Study.Prototype;
 using static System.Console;
-
-
 
 public class App
 {

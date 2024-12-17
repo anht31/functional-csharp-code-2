@@ -1,30 +1,32 @@
-﻿
-
-using FactoryMethod_To_AbstractFactory;
-
-namespace FactoryMethod_To_AbstractFactory;
+﻿namespace DesignPatterns.Study.FactoryMethod_To_AbstractFactory;
 using static System.Console;
 
-public abstract class Dialog {
+public abstract class Dialog
+{
     public abstract Button CreateButton();
     public abstract CheckBox CreateCheckbox();
 }
-class WindowDialog : Dialog {
+class WindowDialog : Dialog
+{
     public override Button CreateButton() => new WindowButton();
     public override CheckBox CreateCheckbox() => new WindowCheckBox();
 }
-class WebDialog : Dialog {
+class WebDialog : Dialog
+{
     public override Button CreateButton() => new HTMLButton();
     public override CheckBox CreateCheckbox() => new HTMLCheckBox();
 }
 
-public interface Button {
+public interface Button
+{
     void Render();
 }
-class WindowButton : Button {
+class WindowButton : Button
+{
     public void Render() => WriteLine("WindowButton Render...");
 }
-class HTMLButton : Button {
+class HTMLButton : Button
+{
     public void Render() => WriteLine("HTMLButton Render...");
 }
 
@@ -51,7 +53,8 @@ public class App
     }
 
     public Dialog ConfigSystem(string os = "Windows")
-        => os switch {
+        => os switch
+        {
             "Windows" => new WindowDialog(),
             "Web" => new WebDialog(),
             _ => throw new Exception("Unknow operating system.")

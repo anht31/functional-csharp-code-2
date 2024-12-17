@@ -1,5 +1,5 @@
 ﻿
-namespace AbstractFactory;
+namespace DesignPatterns.Study.AbstractFactory;
 
 using static System.Console;
 
@@ -7,21 +7,26 @@ public interface GUIFactory
 {
     public Button CreateButton();
 }
-public class WindowFactory : GUIFactory {
+public class WindowFactory : GUIFactory
+{
     public Button CreateButton() => new WinButton();
 }
-public class MacFactory : GUIFactory {
+public class MacFactory : GUIFactory
+{
     public Button CreateButton() => new MacButton();
 }
 
 
-public interface Button {
+public interface Button
+{
     void Paint();
 }
-public class WinButton : Button {
+public class WinButton : Button
+{
     public void Paint() => WriteLine("Render WinButton...");
 }
-public class MacButton : Button {
+public class MacButton : Button
+{
     public void Paint() => WriteLine("Render MacButton...");
 }
 

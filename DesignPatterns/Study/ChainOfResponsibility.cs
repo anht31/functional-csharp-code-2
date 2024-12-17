@@ -1,7 +1,7 @@
 ﻿using static System.Console;
 using System.Collections.Generic;
 
-namespace ChainOfResponsibility;
+namespace DesignPatterns.Study.ChainOfResponsibility;
 
 public interface IHandler
 {
@@ -14,20 +14,20 @@ public abstract class AbstractHandler : IHandler
     private IHandler _nextHandler;
     public IHandler SetNext(IHandler handler)
     {
-        this._nextHandler = handler;
+        _nextHandler = handler;
         return handler;
     }
 
     public virtual object Handle(object request)
-        => this._nextHandler != null
-            ? this._nextHandler.Handle(request)
+        => _nextHandler != null
+            ? _nextHandler.Handle(request)
             : null;
 }
 
 class MonkeyHandler : AbstractHandler
 {
     public override object Handle(object request)
-        => (request as string) == "Banana"
+        => request as string == "Banana"
             ? $"Monkey: I'll eat the {request.ToString()}.\n"
             : base.Handle(request);
 }
@@ -35,7 +35,7 @@ class MonkeyHandler : AbstractHandler
 class SquirrelHandler : AbstractHandler
 {
     public override object Handle(object request)
-        => (request.ToString() == "Nut")
+        => request.ToString() == "Nut"
             ? $"Squirrel: I'll eat the {request.ToString()}.\n"
             : base.Handle(request);
 }
@@ -43,7 +43,7 @@ class SquirrelHandler : AbstractHandler
 class DogHandler : AbstractHandler
 {
     public override object Handle(object request)
-        => (request.ToString() == "MeatBall")
+        => request.ToString() == "MeatBall"
             ? $"Dog: I'll eat the {request.ToString()}.\n"
             : base.Handle(request);
 }

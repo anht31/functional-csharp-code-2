@@ -1,15 +1,18 @@
 ﻿using static System.Console;
-namespace DoubleDispatchVisitor;
+namespace DesignPatterns.Study.DoubleDispatchVisittor;
 
-class Shape  {
+class Shape
+{
     public virtual void Draw() => WriteLine("Draw Shape");
     public virtual void Accept(ExporterVisitor visitor) => visitor.Export(this);
 }
-class Dot : Shape {
+class Dot : Shape
+{
     public override void Draw() => WriteLine("Draw Dot");
     public override void Accept(ExporterVisitor visitor) => visitor.Export(this);
 }
-class Rectangle : Shape {
+class Rectangle : Shape
+{
     public override void Draw() => WriteLine("Draw Rectangle");
     public override void Accept(ExporterVisitor visitor) => visitor.Export(this);
 }
@@ -26,10 +29,12 @@ static class ExporterExtensions
     public static void Export(this Rectangle rectangle) => WriteLine("Export Rectangle");
 }
 
-class App {
+class App
+{
     void DrawShape(Shape shape) => shape.Draw();
     void ExportShape(Shape shape) => shape.Accept(new ExporterVisitor());
-    public void Run() {
+    public void Run()
+    {
         WriteLine("ExportShape(new Rectangle())");
         ExportShape(new Rectangle());
         WriteLine("new Exporter().Export(new Rectangle())");

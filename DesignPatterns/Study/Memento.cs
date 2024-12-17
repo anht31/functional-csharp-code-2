@@ -1,5 +1,5 @@
 ﻿using static System.Console;
-namespace MementoNested;
+namespace DesignPatterns.Study.Memento;
 
 class Originator
 {
@@ -9,7 +9,7 @@ class Originator
     public void Restore(object memento)
     {
         // can't access from outside: Originator.Memento
-        if (memento is Memento m) this.state = m.GetState();
+        if (memento is Memento m) state = m.GetState();
         else throw new ArgumentException("Invalid Memento");
     }
     public void ShowState() => WriteLine($"Current State: {state}");
@@ -28,8 +28,10 @@ class Caretaker
 {
     private readonly Stack<object> history = new(); // use object as interface for Memento
     public void Save(Originator originator) => history.Push(originator.Save());
-    public void Undo(Originator originator) {
-        if (history.Count > 0) {
+    public void Undo(Originator originator)
+    {
+        if (history.Count > 0)
+        {
             var memento = history.Pop();
             originator.Restore(memento);
         }
@@ -39,7 +41,8 @@ class Caretaker
 
 public class App
 {
-    public void Run() {
+    public void Run()
+    {
         Originator originator = new Originator("1");
         Caretaker caretaker = new Caretaker();
         originator.ShowState();

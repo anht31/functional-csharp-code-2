@@ -1,14 +1,17 @@
 ﻿using System.Reflection.Metadata;
 using static System.Console;
-namespace DoubleDispatchGuru;
+namespace DesignPatterns.Study.DoubleDispatchGuru;
 
-class Shape  {
+class Shape
+{
     public virtual void Draw() => WriteLine("Draw Shape");
 }
-class Dot : Shape {
+class Dot : Shape
+{
     public override void Draw() => WriteLine("Draw Dot");
 }
-class Rectangle : Shape {
+class Rectangle : Shape
+{
     public override void Draw() => WriteLine("Draw Rectangle");
 }
 
@@ -18,10 +21,12 @@ class Exporter
     public void Export(Rectangle rectangle) => WriteLine("Export rectangle");
 }
 
-class App {
+class App
+{
     void DrawShape(Shape shape) => shape.Draw();
     void ExportShape(Shape shape) => new Exporter().Export(shape);
-    public void Run() {
+    public void Run()
+    {
         WriteLine("LateDynamicBinding");
         LateDynamicBinding();
         WriteLine("EarlyStaticBinding");

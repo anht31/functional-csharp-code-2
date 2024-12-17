@@ -1,5 +1,5 @@
 ﻿using static System.Console;
-namespace ExampleMementoStricter;
+namespace DesignPatterns.Study.ExampleMementoStricter;
 
 public interface IOriginator
 {
@@ -42,7 +42,7 @@ class ConcreteMemento : IMemento
     private DateTime _date;
     public ConcreteMemento(Originator originator, string state)
     {
-        this._originator = originator;
+        _originator = originator;
         this._state = state;
         this._date = DateTime.Now;
     }
@@ -50,7 +50,7 @@ class ConcreteMemento : IMemento
     public void Restore()
     {
         _originator.SetState(this._state);
-        Console.Write($"Originator: My state has changed to: {_state}");
+        Write($"Originator: My state has changed to: {_state}");
     }
     // The rest of the methods are used by the Caretaker to display metadata.
     public string GetName() => $"{this._date} / ({this._state.Substring(0, 9)})...";
@@ -80,9 +80,12 @@ class Caretaker
         var memento = this._mementos.Pop();
         WriteLine("Caretaker: Restoring state to: " + memento.GetName());
 
-        try {
+        try
+        {
             memento.Restore();
-        } catch (Exception) {
+        }
+        catch (Exception)
+        {
             this.Undo(); // Next in stack
         }
     }

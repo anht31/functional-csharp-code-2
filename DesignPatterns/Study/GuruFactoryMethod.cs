@@ -1,7 +1,7 @@
 ﻿using System;
 using static System.Console;
 
-namespace GuruFactoryMethod;
+namespace DesignPatterns.Study.GuruFactoryMethod;
 
 // The Creator class declares the factory method that is supposed to return
 // an object of a Product class. The Creator's subclasses usually provide
@@ -83,6 +83,6 @@ class Client
     // the creator via the base interface, you can pass it any creator's
     // subclass.
     public void ClientCode(Creator creator)
-        => WriteLine("Client: I'm not aware of the creator's class, but it still works.\n" 
+        => WriteLine("Client: I'm not aware of the creator's class, but it still works.\n"
             + creator.SomeOperation());
 }

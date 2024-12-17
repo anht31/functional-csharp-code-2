@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace SimpleExpression;
+namespace DesignPatterns.Study.SimpleExpression;
 
 class Context
 {
@@ -32,7 +32,7 @@ class AddExpression : IExpression
         _leftExpression = left;
         _rightExpression = right;
     }
-    public int Interpret(Context context) 
+    public int Interpret(Context context)
         => _leftExpression.Interpret(context) + _rightExpression.Interpret(context);
 }
 class SubtractExpression : IExpression
@@ -44,7 +44,7 @@ class SubtractExpression : IExpression
         _leftExpression = left;
         _rightExpression = right;
     }
-    public int Interpret(Context context) 
+    public int Interpret(Context context)
         => _leftExpression.Interpret(context) - _rightExpression.Interpret(context);
 }
 

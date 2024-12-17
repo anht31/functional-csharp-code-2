@@ -1,5 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using static System.Console;
+
+namespace DesignPatterns.Study.MementoNested2;
+
 public class Originator
 {
     private string state;

@@ -1,30 +1,36 @@
 ﻿using static System.Console;
-namespace Command;
+namespace DesignPatterns.Study.Command;
 
-public interface ICommand {
+public interface ICommand
+{
     public void Execute();
 }
-public class SimpleCommand : ICommand {
+public class SimpleCommand : ICommand
+{
     private string _payload = string.Empty;
-    public SimpleCommand(string payload) => this._payload = payload;
-    public void Execute() => WriteLine($"SimpleCommand: do simple printing: {this._payload}");
+    public SimpleCommand(string payload) => _payload = payload;
+    public void Execute() => WriteLine($"SimpleCommand: do simple printing: {_payload}");
 }
-public class ComplexCommand : ICommand {
+public class ComplexCommand : ICommand
+{
     private Receiver _receiver;
     private string _a, _b;
-    public ComplexCommand(Receiver receiver, string a, string b) {
-        this._receiver = receiver;
-        this._a = a;
-        this._b = b;
+    public ComplexCommand(Receiver receiver, string a, string b)
+    {
+        _receiver = receiver;
+        _a = a;
+        _b = b;
     }
-    public void Execute() {
+    public void Execute()
+    {
         WriteLine("ComplexCommand: Complex stuff");
-        this._receiver.DoSomething(this._a);
-        this._receiver.DoSomethingElse(this._b);
+        _receiver.DoSomething(_a);
+        _receiver.DoSomethingElse(_b);
     }
 }
 
-public class Receiver {
+public class Receiver
+{
     public void DoSomething(string a) => WriteLine($"Receiver: Working on {a}.");
     public void DoSomethingElse(string b) => WriteLine($"Receiver: Also working on {b}.");
 }
@@ -35,24 +41,24 @@ public class Invoker
     private ICommand _onFinish;
     public void SetOnStart(ICommand command)
     {
-        this._onStart = command;
+        _onStart = command;
     }
     public void SetOnFinish(ICommand command)
     {
-        this._onFinish = command;
+        _onFinish = command;
     }
     public void DoSomethingImportant()
     {
         WriteLine("Invoker: Does anybody want something done before I begin?");
-        if (this._onStart is ICommand)
+        if (_onStart is ICommand)
         {
-            this._onStart.Execute();
+            _onStart.Execute();
         }
         WriteLine("Invoker: ...doing something really important...");
         WriteLine("Invoker: Does anybody want something done after I finish?");
-        if (this._onFinish is ICommand)
+        if (_onFinish is ICommand)
         {
-            this._onFinish.Execute();
+            _onFinish.Execute();
         }
     }
 }

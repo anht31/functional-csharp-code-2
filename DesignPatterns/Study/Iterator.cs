@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Iterator;
+namespace DesignPatterns.Study.Iterator;
 
 abstract class Iterator : IEnumerator
 {
@@ -43,32 +43,32 @@ class AlphabeticalOrderIterator : Iterator
 
     public AlphabeticalOrderIterator(WordsCollection collection, bool reverse = false)
     {
-        this._collection = collection;
-        this._reverse = reverse;
+        _collection = collection;
+        _reverse = reverse;
 
         if (reverse)
         {
-            this._position = collection.getItems().Count;
+            _position = collection.getItems().Count;
         }
     }
 
     public override object Current()
     {
-        return this._collection.getItems()[_position];
+        return _collection.getItems()[_position];
     }
 
     public override int Key()
     {
-        return this._position;
+        return _position;
     }
 
     public override bool MoveNext()
     {
-        int updatedPosition = this._position + (this._reverse ? -1 : 1);
+        int updatedPosition = _position + (_reverse ? -1 : 1);
 
-        if (updatedPosition >= 0 && updatedPosition < this._collection.getItems().Count)
+        if (updatedPosition >= 0 && updatedPosition < _collection.getItems().Count)
         {
-            this._position = updatedPosition;
+            _position = updatedPosition;
             return true;
         }
         else
@@ -79,7 +79,7 @@ class AlphabeticalOrderIterator : Iterator
 
     public override void Reset()
     {
-        this._position = this._reverse ? this._collection.getItems().Count - 1 : 0;
+        _position = _reverse ? _collection.getItems().Count - 1 : 0;
     }
 }
 
@@ -103,7 +103,7 @@ class WordsCollection : IteratorAggregate
 
     public void AddItem(string item)
     {
-        this._collection.Add(item);
+        _collection.Add(item);
     }
 
     public override IEnumerator GetEnumerator()

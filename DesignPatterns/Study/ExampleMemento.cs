@@ -1,22 +1,22 @@
 ﻿using static System.Console;
-namespace ExampleMemento;
+namespace DesignPatterns.Study.ExampleMemento;
 
 class Originator
 {
     private string _state;
     public Originator(string state)
     {
-        this._state = state;
+        _state = state;
         WriteLine("Originator: My initial state is: " + state);
     }
     public void DoSomething()
     {
         WriteLine("Originator: I'm doing something important.");
-        this._state = new Random().Next().ToString();
+        _state = new Random().Next().ToString();
         WriteLine($"Originator: and my state has changed to: {_state}");
     }
 
-    public IMemento Save() => new ConcreteMemento(this._state);
+    public IMemento Save() => new ConcreteMemento(_state);
 
     public void Restore(IMemento memento)
     {
@@ -24,8 +24,8 @@ class Originator
         {
             throw new Exception("Unknown memento class " + memento.ToString());
         }
-        this._state = m.GetState();
-        Console.Write($"Originator: My state has changed to: {_state}");
+        _state = m.GetState();
+        Write($"Originator: My state has changed to: {_state}");
     }
 }
 
@@ -42,14 +42,14 @@ class ConcreteMemento : IMemento
     private DateTime _date;
     public ConcreteMemento(string state)
     {
-        this._state = state;
-        this._date = DateTime.Now;
+        _state = state;
+        _date = DateTime.Now;
     }
     // The Originator uses this method when restoring its state.
-    public string GetState() => this._state;
+    public string GetState() => _state;
     // The rest of the methods are used by the Caretaker to display metadata.
-    public string GetName() => $"{this._date} / ({this._state.Substring(0, 9)})...";
-    public DateTime GetDate() => this._date;
+    public string GetName() => $"{_date} / ({_state.Substring(0, 9)})...";
+    public DateTime GetDate() => _date;
 }
 
 // The Caretaker doesn't depend on the Concrete Memento class. Therefore, it
@@ -60,35 +60,38 @@ class Caretaker
     private Originator _originator = null;
     private List<IMemento> _mementos = new List<IMemento>();
 
-    public Caretaker(Originator originator) => this._originator = originator;
+    public Caretaker(Originator originator) => _originator = originator;
 
     public void Backup()
     {
         WriteLine("\nCaretaker: Saving Originator's state...");
-        this._mementos.Add(this._originator.Save());
+        _mementos.Add(_originator.Save());
     }
 
     public void Undo()
     {
-        if (this._mementos.Count == 0)
+        if (_mementos.Count == 0)
             return;
 
-        var memento = this._mementos.Last();
-        this._mementos.Remove(memento);
+        var memento = _mementos.Last();
+        _mementos.Remove(memento);
 
         WriteLine("Caretaker: Restoring state to: " + memento.GetName());
 
-        try {
-            this._originator.Restore(memento);
-        } catch (Exception) {
-            this.Undo(); // Next in stack
+        try
+        {
+            _originator.Restore(memento);
+        }
+        catch (Exception)
+        {
+            Undo(); // Next in stack
         }
     }
 
     public void ShowHistory()
     {
         WriteLine("Caretaker: Here's the list of mementos:");
-        this._mementos.ForEach(memento => WriteLine(memento.GetName()));
+        _mementos.ForEach(memento => WriteLine(memento.GetName()));
     }
 
     // Limit access by use interface
