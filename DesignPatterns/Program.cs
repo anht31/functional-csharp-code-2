@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.Prototype.App().Run();
+new DesignPatterns.Remember.Decorator.Client().Run();
 
 Console.ReadLine();
