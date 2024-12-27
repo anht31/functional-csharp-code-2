@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static System.Console;
+namespace DesignPatterns.Remember.Facade;
 
-namespace DesignPatterns.Remember
+class OtherClass
 {
-    internal class Facade
+    public void DoSomething() { }
+    public void DoAnother() { }
+}
+
+class AdditionalFacade
+{
+    public void AnotherOperation() { }
+}
+
+class Facade
+{
+    OtherClass otherClass = new OtherClass();
+    AdditionalFacade additionalFacade = new AdditionalFacade();
+    public void Execute()
     {
+        otherClass.DoSomething();
+        otherClass.DoAnother();
+        additionalFacade.AnotherOperation();
     }
 }
