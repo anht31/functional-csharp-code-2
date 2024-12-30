@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.ProxyInherit.Client().Run();
+new DesignPatterns.Remember.Command.Client().Run();
 
 Console.ReadLine();
