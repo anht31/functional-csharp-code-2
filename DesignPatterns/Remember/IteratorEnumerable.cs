@@ -1,30 +1,24 @@
 ﻿using System.Collections;
 using static System.Console;
-namespace DesignPatterns.Remember.Iterator;
+namespace DesignPatterns.Remember.IteratorEnumerable;
 
-interface IIterator
+interface IIterator : IEnumerator
 {
-    int GetNext();
     bool HasMore();
 }
 class ConcreteIterator : IIterator
 {
     private int _position = -1;
     private IIteratorCollecion _collecions;
-    private List<int> _cache;
     public ConcreteIterator(IIteratorCollecion collecions) => _collecions = collecions;
-    public bool HasMore() => LazyInit() && _position < _cache.Count - 1;
-    public int GetNext() => _cache[++_position];
-    //private bool LazyInit()
-    //{
-    //    if (_cache == null)
-    //        _cache = _collecions.GetItems();
-    //    return true;
-    //}
-    private bool LazyInit() => (_cache ??= _collecions.GetItems()) != null;
+    public bool HasMore() => _position < _collecions.GetItems().Count - 1;
+
+    public object Current => _collecions.GetItems()[_position];
+    public bool MoveNext() => HasMore() && ++_position >= 0;
+    public void Reset() => _position = 0;
 }
 
-interface IIteratorCollecion {
+interface IIteratorCollecion : IEnumerable {
     IIterator CreateIterator();
 
     List<int> GetItems();
@@ -34,9 +28,9 @@ class ConcreteCollection : IIteratorCollecion
     List<int> _items = new List<int>();
     public IIterator CreateIterator() => new ConcreteIterator(this);
     
-    // Helper func
     public void AddItem(int item) => _items.Add(item);
     public List<int> GetItems() => _items;
+    public IEnumerator GetEnumerator() => CreateIterator();
 }
 
 class Client
@@ -48,8 +42,9 @@ class Client
         collecion.AddItem(2);
         collecion.AddItem(3);
 
-        var iterator = collecion.CreateIterator();
-        while(iterator.HasMore())
-            WriteLine(iterator.GetNext());
+        foreach (var item in collecion)
+        {
+            WriteLine(item);
+        }
     }
 }

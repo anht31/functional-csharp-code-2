@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.Command.Client().Run();
+new DesignPatterns.Remember.Iterator.Client().Run();
 
 Console.ReadLine();
