@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.Memento.Client().Run();
+new DesignPatterns.Remember.MementoStricter.Client().Run();
 
 Console.ReadLine();
