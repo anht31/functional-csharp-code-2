@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.Strategy.Client().Run();
+new DesignPatterns.Remember.TemplateMethod.Client().Run();
 
 Console.ReadLine();

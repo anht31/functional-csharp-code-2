@@ -28,6 +28,8 @@ class Client
     {
         var context = new Context();
 
+        WriteLine("Please enter 'A' or 'B'");
+
         if (Console.ReadLine() == "A")
             context.SetStrategy(new ConcreteStrategryA());
         else
