@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.PlayerState.Client().Run();
+new DesignPatterns.Remember.Strategy.Client().Run();
 
 Console.ReadLine();
