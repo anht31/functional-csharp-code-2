@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.TemplateMethod.Client().Run();
+new DesignPatterns.Remember.ShapeVisitor.Client().Run();
 
 Console.ReadLine();
