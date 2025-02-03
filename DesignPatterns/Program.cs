@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.Remember.ShapeVisitor.Client().Run();
+new DesignPatterns.RelatePatterns.FactoryMethodPrototype.Client().Run();
 
 Console.ReadLine();
