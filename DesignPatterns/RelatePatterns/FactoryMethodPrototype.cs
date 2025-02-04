@@ -3,66 +3,88 @@ namespace DesignPatterns.RelatePatterns.FactoryMethodPrototype;
 
 interface IPrototype
 {
-    string GetColor();
     Button Clone();
 }
 interface IButton
 {
     void Render();
 }
-abstract class Button : IPrototype, IButton
+class Button : IPrototype, IButton
 {
     private string _shape;
-    public Button Clone() => new(this);
-    public Button(Button button) => this._shape = button._shape;
+    public Button(string shape) => this._shape = shape;
 
-    public virtual string GetColor() { }
-    public virtual void Render();
+    public virtual Button Clone() => new(this);
+    private protected Button(Button button) => this._shape = button._shape;
+    public virtual void Render() { }
 }
 class WindowButtons : Button
 {
     private string _color;
-    public WindowButtons Clone() => new WindowButtons(this);
-    public WindowButtons(string color) => _color = color;
-    public WindowButtons(WindowButtons button) => this._color = button._color;
-    public string GetColor() => _color;
-    public void Render() => WriteLine($"WindowButton {_color} Rendered");
+    public WindowButtons(WindowButtons button) : base(button) 
+        => _color = button._color;
+    public override WindowButtons Clone() => new WindowButtons(this);
+
+    public WindowButtons(string shape, string color) : base(shape) 
+        => _color = color;
+    public string Color => _color;
+    public override void Render() => WriteLine($"WindowButton {_color} Rendered");
 }
-class MacButtons(string _color) : Button
+class MacButtons : Button
 {
-    public IPrototype Clone()
-    {
-        throw new NotImplementedException();
-    }
+    private string _color;
+    public MacButtons(MacButtons button) : base(button)
+        => this._color = button._color;
+    public override MacButtons Clone() => new MacButtons(this);
 
-    public string GetColor()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Render() => WriteLine($"MacButtons {_color} Rendered");
+    public MacButtons(string shape, string color) : base(shape)
+        => this._color = color;
+    public string Color => _color;
+    public override void Render() => WriteLine($"MacButtons {_color} Rendered");
 }
 
 abstract class Dialog
 {
+    private protected Dictionary<string, Button> _items = new Dictionary<string, Button>();
+    private protected string GetKey(string os, string shape, string color) => $"{os}-{shape}-{color}";
+
     public void Render()
     {
-        var okRedButton = CreateButton("Red");
-        var okGreenButton = CreateButton("Green");
-        var otherRedButton = CreateButton("Red");
+        var okRedButton = CreateButton("Circle", "Red");
+        var okGreenButton = CreateButton("Square", "Green");
+        var otherRedButton = CreateButton("Circle", "Red");
         okRedButton.Render();
         okGreenButton.Render();
         otherRedButton.Render();
+        WriteLine($"Total Prototypes: {_items.Count}");
     }
-    public abstract IButton CreateButton(string color);
+    public abstract IButton CreateButton(string shape, string color);
 }
 class WindowDialog : Dialog
 {
-    public override IButton CreateButton(string color) => new WindowButtons(color);
+    public override IButton CreateButton(string shape, string color)
+    {
+        string key = GetKey("Win", shape, color);
+        if (_items.TryGetValue(key, out Button? button) && button is WindowButtons windowButton)
+            return windowButton.Clone();
+
+        button = new WindowButtons(shape, color);
+        _items.Add(key, button);
+        return button;
+    }
 }
 class MacDialog : Dialog
 {
-    public override IButton CreateButton(string color) => new MacButtons(color);
+    public override IButton CreateButton(string shape, string color)
+    {
+        string key = GetKey("Mac", shape, color);
+        if (_items.TryGetValue(key, out Button? button) && button is MacButtons macButton)
+            return macButton.Clone();
+
+        button = new MacButtons(shape, color);
+        _items.Add(key, button);
+        return button;
+    }
 }
 
 class Client
