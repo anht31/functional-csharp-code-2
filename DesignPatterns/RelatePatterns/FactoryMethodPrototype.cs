@@ -68,9 +68,10 @@ class WindowDialog : Dialog
         if (_items.TryGetValue(key, out Button? button) && button is WindowButtons windowButton)
             return windowButton.Clone();
 
-        button = new WindowButtons(shape, color);
-        _items.Add(key, button);
-        return button;
+        return _items[key] = new WindowButtons(shape, color);
+        //button = new WindowButtons(shape, color);
+        //_items.Add(key, button);
+        //return button;
     }
 }
 class MacDialog : Dialog
@@ -81,9 +82,10 @@ class MacDialog : Dialog
         if (_items.TryGetValue(key, out Button? button) && button is MacButtons macButton)
             return macButton.Clone();
 
-        button = new MacButtons(shape, color);
-        _items.Add(key, button);
-        return button;
+        return _items[key] = new MacButtons(shape, color);
+        //button = new MacButtons(shape, color);
+        //_items.Add(key, button);
+        //return button;
     }
 }
 
