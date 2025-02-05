@@ -1,5 +1,5 @@
 ﻿using static System.Console;
-namespace DesignPatterns.RelatePatterns.FactoryMethodPrototype;
+namespace DesignPatterns.RelatePatterns.AbstractFactoryPrototype;
 
 interface IPrototype
 {
@@ -9,23 +9,18 @@ interface IButton
 {
     void Render();
 }
-//class Button : IPrototype, IButton
-//{
-//    private string _shape;
-//    public Button(string shape) => this._shape = shape;
-
-//    public virtual Button Clone() => new(this);
-//    private protected Button(Button button) => this._shape = button._shape;
-//    public virtual void Render() { }
-//}
-abstract class Button : IPrototype, IButton
+interface ICheckBox
+{
+    void Render();
+}
+class Button : IPrototype, IButton
 {
     private string _shape;
     public Button(string shape) => this._shape = shape;
 
-    public abstract Button Clone();
+    public virtual Button Clone() => new(this);
     private protected Button(Button button) => this._shape = button._shape;
-    public abstract void Render();
+    public virtual void Render() { }
 }
 class WindowButtons : Button
 {
