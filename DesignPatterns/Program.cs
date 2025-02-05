@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.FactoryMethodPrototype.Client().Run();
+new DesignPatterns.RelatePatterns.AbstractFactoryPrototype.Client().Run();
 
 Console.ReadLine();
