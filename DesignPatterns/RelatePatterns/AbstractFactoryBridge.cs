@@ -18,32 +18,27 @@ abstract class GUIComponnet
 {
     private protected IRenderEngine _engine;
     protected GUIComponnet(IRenderEngine engine) => this._engine = engine;
-    public void RenderUI() => _engine.Render();
+    public void Render() => _engine.Render();
 }
+
 abstract class Button : GUIComponnet {
-    public abstract void Render();
     public Button(IRenderEngine engine) : base(engine) { }
 }
 class WindowButton : Button {
     public WindowButton(IRenderEngine engine) : base(engine) { }
-    public override void Render() => base.RenderUI();
 }
 class MacButton : Button {
     public MacButton(IRenderEngine engine) : base(engine) { }
-    public override void Render() => base.RenderUI();
 }
 
 abstract class Checkbox : GUIComponnet {
     protected Checkbox(IRenderEngine engine) : base(engine) { }
-    public abstract void Render();
 }
 class WindowCheckbox : Checkbox {
     public WindowCheckbox(IRenderEngine engine) : base(engine) { }
-    public override void Render() => base.RenderUI();
 }
 class MacCheckbox : Checkbox {
     public MacCheckbox(IRenderEngine engine) : base(engine) { }
-    public override void Render() => base.RenderUI();
 }
 
 interface IRenderEngine {
