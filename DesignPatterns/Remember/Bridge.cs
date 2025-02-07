@@ -19,14 +19,11 @@ interface IImplementation
     public void Method1();
     public void Method2();
     public void Method3();
-
 }
 class ConcreteImplementations : IImplementation
 {
     public void Method1() => WriteLine("Method1 call...");
-
     public void Method2() => WriteLine("Method2 call...");
-
     public void Method3() => WriteLine("Method3 call...");
 }
 
