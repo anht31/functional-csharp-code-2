@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.AbstractFactorySingletons.Client().Run();
+new DesignPatterns.RelatePatterns.BuilderComposite.Client().Run();
 
 Console.ReadLine();
