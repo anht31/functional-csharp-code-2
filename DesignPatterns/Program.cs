@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.BuilderBridgeRemote.Client().Run();
+new DesignPatterns.RelatePatterns.BuilderSingletons.Client().Run();
 
 Console.ReadLine();
