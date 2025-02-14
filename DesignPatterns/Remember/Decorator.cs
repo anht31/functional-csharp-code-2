@@ -5,10 +5,12 @@ interface IComponent
 {
     void Execute();
 }
+
 class ConcreteComponent(string name) : IComponent
 {
     public void Execute() => WriteLine($"{name} do something");
 }
+
 abstract class BaseDecorator : IComponent
 {
     IComponent wrappee;

@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.BuilderSingletons.Client().Run();
+new DesignPatterns.RelatePatterns.PrototypeComposite.Client().Run();
 
 Console.ReadLine();
