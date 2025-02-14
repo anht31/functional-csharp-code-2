@@ -31,7 +31,7 @@ abstract class BaseDecorator : IComponent
     //        ? decorator.Clone() : component is ConcreteComponent concreteComponent
     //            ? concreteComponent.Clone() : component;
 
-    // BaseDecorator is abstrat, thus just Clone for ConcreteComponent, ConcreteDecorators
+    // BaseDecorator is abstract, thus just Clone for ConcreteComponent, ConcreteDecorators
     public BaseDecorator(IComponent component, bool isClone)
         => this.wrappee = isClone ? component.Clone() : component;
     public abstract IComponent Clone();
