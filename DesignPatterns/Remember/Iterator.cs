@@ -13,7 +13,7 @@ class ConcreteIterator : IIterator
     private IIteratorCollecion _collecions;
     private List<int> _cache;
     public ConcreteIterator(IIteratorCollecion collecions) => _collecions = collecions;
-    public bool HasMore() => (LazyInit() != null) && _position < _cache.Count - 1;
+    public bool HasMore() => (LazyInit() != null) && _position < (_cache.Count - 1);
     public int GetNext() => _cache[++_position];
     private object LazyInit() => _cache ??= _collecions.GetItems() ;
 }

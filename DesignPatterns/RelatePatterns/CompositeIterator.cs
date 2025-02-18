@@ -1,4 +1,7 @@
-﻿using static System.Console;
+﻿using System.Collections;
+using System.Net.WebSockets;
+using System.Runtime.CompilerServices;
+using static System.Console;
 namespace DesignPatterns.RelatePatterns.CompositeIterator;
 
 interface IIterator
@@ -12,35 +15,35 @@ class ConcreteIterator : IIterator
     private ICollection _collection;
     private List<IComponent> _cache;
     public ConcreteIterator(ICollection collection) => _collection = collection;
-    public IComponent GetNext()
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasMore()
-    {
-        throw new NotImplementedException();
-    }
+    public IComponent GetNext() => _cache[++_position];
+    public bool HasMore() => (LazyInit() != null) && _position < (_cache.Count - 1);
+    private object LazyInit() => _cache ??= _collection.GetItems().ToList();
 }
 
 interface ICollection
 {
     IIterator CreateIterator();
-    List<IComponent> GetItems();
+    IEnumerable<IComponent> GetItems();
 }
-interface IComponent
+interface IComponent : ICollection
 {
     void Excute();
+    void Display();
 }
-
 class Leaf(string name) : IComponent
 {
     public void Excute() => WriteLine($"{name} Do some work");
+    public void Display() => WriteLine($"{name} Do some work");
+    public IIterator CreateIterator() => new ConcreteIterator(this);
+    public IEnumerable<IComponent> GetItems()
+    {
+        yield return this;
+    }
 }
 
 class Composite(string name) : IComponent
 {
-    List<IComponent> _components = new List<IComponent>();
+    private List<IComponent> _components = new List<IComponent>();
     public void Add(IComponent component) => _components.Add(component);
     public void Remove(IComponent component) => _components.Remove(component);
     public List<IComponent> GetChildren() => _components.ToList();
@@ -49,6 +52,27 @@ class Composite(string name) : IComponent
     {
         WriteLine($"Composite {name} Execute.");
         _components.ForEach(x => x.Excute());
+    }
+    public void Display() => WriteLine($"Composite {name} Execute.");
+
+    public IIterator CreateIterator() => new ConcreteIterator(this);
+    public IEnumerable<IComponent> GetItems()
+    {
+        yield return this;
+        foreach (var component in _components)
+        {
+            if (component is Composite composite)
+            {
+                foreach (var child in composite.GetItems())
+                {
+                    yield return child;
+                }
+            }
+            else
+            {
+                yield return component;
+            }
+        }
     }
 }
 
@@ -64,5 +88,12 @@ class Client
         var compositeRoot = new Composite("root");
         compositeRoot.Add(composite);
         compositeRoot.Excute();
+
+        WriteLine("\nIteratorr in Tree.\n");
+        var iterator = compositeRoot.CreateIterator();
+        while (iterator.HasMore())
+        {
+            iterator.GetNext().Display();
+        }
     }
 }
