@@ -61,17 +61,9 @@ class Composite(string name) : IComponent
         yield return this;
         foreach (var component in _components)
         {
-            if (component is Composite composite)
-            {
-                foreach (var child in composite.GetItems())
-                {
-                    yield return child;
-                }
-            }
-            else
-            {
-                yield return component;
-            }
+            // this foreach support for yeild return only
+            foreach (var child in component.GetItems())
+                yield return child;
         }
     }
 }
