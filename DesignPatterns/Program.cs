@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.CompositeIterator.Client().Run();
+new DesignPatterns.RelatePatterns.CompositeVisitor.Client().Run();
 
 Console.ReadLine();
