@@ -1,24 +1,29 @@
-﻿using static System.Console;
+﻿using System.Xml.Linq;
+using static System.Console;
 namespace DesignPatterns.Remember.Composite;
 
 interface IComponent
 {
-    void Excute();
+    void Execute();
 }
 
 class Leaf(string name) : IComponent
 {
-    public void Excute() => WriteLine($"{name} Do some work");
+    public void Execute() => WriteLine($"{name} Do some work");
 }
 
-class Composite : IComponent
+class Composite(string name) : IComponent
 {
     List<IComponent> _components = new List<IComponent>();
     public void Add(IComponent component) => _components.Add(component);
     public void Remove(IComponent component) => _components.Remove(component);
     public List<IComponent> GetChildren() => _components.ToList();
 
-    public void Excute() => _components.ForEach(x => x.Excute());
+    public void Execute()
+    {
+        WriteLine($"Comnposite {name} execute.");
+        _components.ForEach(x => x.Execute());
+    }
 }
 
 class Client
@@ -27,9 +32,11 @@ class Client
     {
         var leaf1 = new Leaf("Leaf1");
         var leaf2 = new Leaf("Leaf2");
-        var composite = new Composite();
+        var composite = new Composite("composite01");
         composite.Add(leaf1);
         composite.Add(leaf2);
-        composite.Excute();
+        var root = new Composite("rootComposite");
+        root.Add(composite);
+        root.Execute();
     }
 }
