@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.CompositeFlyweight.Client().Run();
+new DesignPatterns.RelatePatterns.CompositeDecorator.Client().Run();
 
 Console.ReadLine();
