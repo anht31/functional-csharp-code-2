@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.CompositeDecorator.Client().Run();
+new DesignPatterns.RelatePatterns.ChainOfResponsibilityCommandsRequests.Client().Run();
 
 Console.ReadLine();

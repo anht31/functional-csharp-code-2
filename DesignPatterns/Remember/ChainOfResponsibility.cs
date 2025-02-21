@@ -20,7 +20,7 @@ abstract class BaseHandler : IHandler
     }
 }
 
-class ConcreteHandlerA() : BaseHandler
+class ConcreteHandlerA : BaseHandler
 {
     public override void Handle(object request)
     {
@@ -33,7 +33,7 @@ class ConcreteHandlerA() : BaseHandler
     private bool CanHandle(object request) => request.ToString() == "a";
 }
 
-class ConcreteHandlerB() : BaseHandler
+class ConcreteHandlerB : BaseHandler
 {
     public override void Handle(object request)
     {
@@ -45,7 +45,7 @@ class ConcreteHandlerB() : BaseHandler
 
     private bool CanHandle(object request) => request.ToString() == "b";
 }
-class ConcreteHandlerC() : BaseHandler
+class ConcreteHandlerC : BaseHandler
 {
     public override void Handle(object request)
     {
