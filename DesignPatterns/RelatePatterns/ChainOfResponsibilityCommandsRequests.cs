@@ -1,16 +1,17 @@
-﻿using static System.Console;
+﻿using System.Net.Http.Headers;
+using static System.Console;
 namespace DesignPatterns.RelatePatterns.ChainOfResponsibilityCommandsRequests;
 
 interface ICommand
 {
-    void Execute(object message);
+    bool Execute(object message);
     void SetReceiver(ILoggerReceiver logger);
 }
 class LogCommand : ICommand
 {
     private ILoggerReceiver? _receiver;
     public void SetReceiver(ILoggerReceiver logger) => _receiver = logger;
-    public void Execute(object message) => _receiver?.Log(message.ToString());
+    public bool Execute(object message) => _receiver?.Process(message.ToString()) ?? false;
 }
 
 interface IHandler
@@ -21,7 +22,6 @@ interface IHandler
 abstract class BaseHandler : IHandler
 {
     IHandler? _next;
-    private protected ICommand _command;
     public IHandler SetNext(IHandler handler) => _next = handler;
     public virtual void Handle(ICommand command)
     {
@@ -30,85 +30,92 @@ abstract class BaseHandler : IHandler
         else
             WriteLine($"No handler for request {command}");
     }
-    private protected BaseHandler(ICommand command) => _command = command;
 }
 
-class OrderProcessStep : BaseHandler
+class FileLogHandler : BaseHandler
 {
-    public OrderProcessStep(ICommand command) : base(command) { }
     public override void Handle(ICommand command)
     {
-        if (CanHandle(command))
+        command.SetReceiver(new FileLogger());
+        bool  canHandle = command.Execute("FileLogHandler");
+        if (canHandle)
         {
-            WriteLine("OrderProcessStep do something");
+            WriteLine("FileLogHandler do something");
         }
         else
             base.Handle(command);
     }
-    private bool CanHandle(ICommand command) => request.ToString() == "a";
 }
 
-class OrderCancelStep : BaseHandler
+class ServerLogHandler : BaseHandler
 {
-    public OrderCancelStep(ICommand command) : base(command) { }
     public override void Handle(ICommand command)
     {
-        if (CanHandle(request))
+        command.SetReceiver(new ServerLogger());
+        bool canHandler = command.Execute("ServerLogHandler");
+        if (canHandler)
         {
-            WriteLine("OrderCancelStep do something");
-            _command.SetReceiver(new ServerLogger());
-            _command.Execute(request);
+            WriteLine("ServerLogHandler do something");
         }
         else
-            base.Handle(request);
+            base.Handle(command);
     }
-    private bool CanHandle(ICommand command) => request.ToString() == "b";
 }
-class OrderComfirmStep : BaseHandler
+class DatabaseLogHandler : BaseHandler
 {
-    public OrderComfirmStep(ICommand command) : base(command) { }
     public override void Handle(ICommand command)
     {
-        if (CanHandle(request))
+        command.SetReceiver(new DatabaseLogger());
+        bool canHandler = command.Execute("DatabaseLogHandler");
+        if (canHandler)
         {
-            WriteLine("OrderComfirmStep do something");
-            _command.SetReceiver(new DatabaseLogger());
-            _command.Execute(request);
+            WriteLine("DatabaseLogHandler do something");
         }
         else
-            base.Handle(request);
+            base.Handle(command);
     }
-    private bool CanHandle(ICommand command) => request.ToString() == "c";
 }
 
 interface ILoggerReceiver
 {
-    void Log(string message);
+    bool Process(string message);
 }
 class FileLogger : ILoggerReceiver
 {
-    public void Log(string message) => WriteLine($"FileLogger: {message}");
+    public bool Process(string message)
+    {
+        WriteLine($"FileLogger: {message}");
+        return false;
+    }
 }
 class ServerLogger : ILoggerReceiver
 {
-    public void Log(string message) => WriteLine($"ServerLogger: {message}");
+    public bool Process(string message)
+    {
+        WriteLine($"ServerLogger: {message}");
+        return true;
+    }
 }
 class DatabaseLogger : ILoggerReceiver
 {
-    public void Log(string message) => WriteLine($"DatabaseLogger: {message}");
+    public bool Process(string message)
+    {
+        WriteLine($"DatabaseLogger: {message}");
+        return false;
+    }
 }
 
 class Client
 {
     public void Run()
     {
-        var command = new LogCommand();
+        var orderCancel = new LogCommand();
 
-        var a = new OrderProcessStep();
-        var b = new OrderCancelStep();
-        var c = new OrderComfirmStep();
+        var a = new FileLogHandler();
+        var b = new ServerLogHandler();
+        var c = new DatabaseLogHandler();
         a.SetNext(b).SetNext(c);
 
-        a.Handle(command);
+        a.Handle(orderCancel);
     }
 }
