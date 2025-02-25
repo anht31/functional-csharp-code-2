@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.CommandMemento.Application().Run();
+new DesignPatterns.RelatePatterns.PrototypeCommand.Client().Run();
 
 Console.ReadLine();

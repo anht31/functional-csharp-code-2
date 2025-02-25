@@ -2,10 +2,6 @@
 using static System.Console;
 namespace DesignPatterns.RelatePatterns.FactoryMethodIterator;
 
-class Factory
-{
-
-}
 interface IIterator
 {
     int GetNext();
