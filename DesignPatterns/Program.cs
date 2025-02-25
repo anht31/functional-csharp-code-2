@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.ChainOfResponsibilityCommandsRequests.Client().Run();
+new DesignPatterns.RelatePatterns.CommandMemento.Application().Run();
 
 Console.ReadLine();
