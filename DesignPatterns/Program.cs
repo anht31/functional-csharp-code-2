@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.IteratorMemento.Client().Run();
+new DesignPatterns.RelatePatterns.IteratorVisitor.Client().Run();
 
 Console.ReadLine();
