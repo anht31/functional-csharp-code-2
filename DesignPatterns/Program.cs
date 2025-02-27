@@ -1,4 +1,4 @@
 ﻿
-new DesignPatterns.RelatePatterns.IteratorVisitor.Client().Run();
+new DesignPatterns.RelatePatterns.MediatorObserver.Client().Run();
 
 Console.ReadLine();
