@@ -6,30 +6,28 @@ abstract class AbstractClass
 {
     public void TemplateMethod()
     {
-        Step01();
-        if (Step02())
-            Step03();
+        BaseStep01();
+        if (BaseStep02())
+            RequiredStep03();
         else
-            Step04();
+            HookStep04();
     }
 
-    public virtual void Step01() => WriteLine($"Base do step01");
-    public virtual bool Step02() => false;
-    public virtual void Step03() { }
-    public virtual void Step04() { }
+    public void BaseStep01() => WriteLine($"Base do step01");
+    public bool BaseStep02() => false;
+    public abstract void RequiredStep03();
+    public virtual void HookStep04() { }
 }
 
 class ConcreteClassA : AbstractClass
 {
-    public override void Step03() => WriteLine($"A do Step03");
-    public override void Step04() => WriteLine($"A do Step04");
+    public override void RequiredStep03() => WriteLine($"A do RequiredStep03");
+    public override void HookStep04() => WriteLine($"A do HookStep04");
 }
 class ConcreteClassB : AbstractClass
 {
-    public override void Step01() => WriteLine($"B do Step01");
-    public override bool Step02() => true;
-    public override void Step03() => WriteLine($"B do Step03");
-    public override void Step04() => WriteLine($"B do Step04");
+    public override void RequiredStep03() => WriteLine($"B do RequiredStep03");
+    public override void HookStep04() => WriteLine($"B do HookStep04");
 }
 
 class Client
