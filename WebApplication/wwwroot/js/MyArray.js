@@ -68,12 +68,62 @@ class App {
     }
 
     $reverse2(str) {
-
+        return str.split('').reverse().join('')
     }
 
+    $reverse3 = (str) => [...str].reverse().join('')
+
+    $mergeSortedArrays = (arrayA, arrayB) => {
+        const mergedArray = []
+        let itemA = arrayA.shift()
+        let itemB = arrayB.shift()
+
+        if (arrayA.length == 0) return arrayB
+        if (arrayB.length == 0) return arrayA
+
+        while (itemA !== undefined || itemB !== undefined) {
+            if (itemA <= itemB) {
+                mergedArray.push(itemA)
+                itemA = arrayA.shift()
+            } else if (itemA > itemB) {
+                mergedArray.push(itemB)
+                itemB = arrayB.shift()
+            } else {
+                mergedArray.push(itemA ?? itemB)
+                break
+            }
+        }
+
+        return mergedArray
+    }
+
+    $mergeSortedArrays2 = (arrayI, arrayJ) => {
+        const mergedArray = []
+        let itemI = arrayI[0]
+        let itemJ = arrayJ[0]
+        let i = 0
+        let j = 0
+
+        if (arrayI.length == 0) return arrayJ
+        if (arrayJ.length == 0) return arrayI
+
+        while (itemI || itemJ) {
+            console.log(`${itemI} - ${itemJ}`)
+            if (!itemJ || itemI < itemJ) {
+                mergedArray.push(itemI)
+                itemI = arrayI[++i]
+            }
+            else {
+                mergedArray.push(itemJ)
+                itemJ = arrayJ[++j]
+            }
+        }
+        console.log(mergedArray)
+    } 
+
     run = () => {
-        var text = this.$reverse("How are you?")
-        console.log(text)
+        var result = this.$mergeSortedArrays2([0, 3, 4, 31], [4, 6, 30, 32])
+        console.log(result)
     }
 }
 
