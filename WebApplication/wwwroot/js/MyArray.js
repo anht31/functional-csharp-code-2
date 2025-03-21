@@ -41,8 +41,13 @@ class MyArray {
 }
 
 class Exercises {
-    twoSum(nums: number[], target: number): number[] {
-
+    /**
+     * @param {number[]} nums
+     * @param {number} target
+     * @return {number[]}
+     */
+    twoSum(nums, target) {
+        
     }
 }
 
