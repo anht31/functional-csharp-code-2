@@ -40,6 +40,12 @@ class MyArray {
     }
 }
 
+class Exercises {
+    twoSum(nums: number[], target: number): number[] {
+
+    }
+}
+
 class App {
 
     $testArray = () => {
@@ -122,8 +128,10 @@ class App {
     } 
 
     run = () => {
-        var result = this.$mergeSortedArrays2([0, 3, 4, 31], [4, 6, 30, 32])
-        console.log(result)
+        //var result = this.$mergeSortedArrays2([0, 3, 4, 31], [4, 6, 30, 32])
+
+        var exercises = new Exercises()
+        exercises.twoSum([2, 7, 11, 15], 9)
     }
 }
 
