@@ -40,19 +40,7 @@ class MyArray {
     }
 }
 
-class Exercises {
-    /**
-     * @param {number[]} nums
-     * @param {number} target
-     * @return {number[]}
-     */
-    twoSum(nums, target) {
-        
-    }
-}
-
-class App {
-
+class Study {
     $testArray = () => {
         var myArray = new MyArray()
         myArray.push('a')
@@ -131,13 +119,140 @@ class App {
         }
         console.log(mergedArray)
     } 
+}
 
-    run = () => {
-        //var result = this.$mergeSortedArrays2([0, 3, 4, 31], [4, 6, 30, 32])
+class Exercises {
+    /**
+     * @param {number[]} nums
+     * @param {number} target
+     * @return {number[]}
+     */
+    twoSum (nums, target) {
+        let lookup = new Map()
 
-        var exercises = new Exercises()
-        exercises.twoSum([2, 7, 11, 15], 9)
+        for (let i = 0; i < nums.length; i++) {
+            if (lookup.has(nums[i])) {
+                return [lookup.get(nums[i]), i]
+            }
+            lookup.set(target - nums[i], i)
+        }
+
+        return []
+    }
+
+    /**
+     * @param {number[]} nums
+     * @return {number}
+     */
+    maxSubArray(nums) {
+        // Initialize currentSum and maxSum with the first element of the array.
+        let currentSum = nums[0];
+        let maxSum = nums[0];
+        console.log(`Index: 0 | Element: ${nums[0]} | Current Sum: ${currentSum} | Max Sum: ${maxSum}`);
+
+        // Loop through the array starting from the second element.
+        for (let i = 1; i < nums.length; i++) {
+            const currentElement = nums[i];
+            const prevCurrentSum = currentSum;
+            // Decide whether to start a new subarray at the current element or extend the previous subarray.
+            currentSum = Math.max(currentElement, prevCurrentSum + currentElement);
+            // Update maxSum if the new currentSum is greater.
+            maxSum = Math.max(maxSum, currentSum);
+
+            console.log(`Index: ${i} | Element: ${currentElement} | Prev Current Sum: ${prevCurrentSum} | Updated Current Sum: ${currentSum} | Max Sum: ${maxSum}`);
+        }
+
+        console.log(`Final result: ${maxSum}`);
+        return maxSum;
+    }
+
+    /**
+     * @param {number[]} nums
+     * @return {void} Do not return anything, modify nums in-place instead.
+     */
+    moveZeroes = function (nums) {
+        let lastNonZeroFoundAt = 0;
+        // Log initial state of the array.
+        console.log("Initial array:", nums);
+
+        // Traverse the array and move non-zero elements forward.
+        for (let i = 0; i < nums.length; i++) {
+            console.log(`Iteration ${i}: current element is ${nums[i]}, lastNonZeroFoundAt is ${lastNonZeroFoundAt}`);
+            if (nums[i] !== 0) {
+                console.log(`  -> Element ${nums[i]} is non-zero, move it to index ${lastNonZeroFoundAt}`);
+                nums[lastNonZeroFoundAt] = nums[i];
+                lastNonZeroFoundAt++;
+                console.log("  -> Array state after moving element:", nums);
+            } else {
+                console.log("  -> Element is zero, do nothing");
+            }
+        }
+
+        // Log state before filling zeros.
+        console.log("After moving non-zero elements, lastNonZeroFoundAt is", lastNonZeroFoundAt);
+
+        // Fill the remaining positions with zeros.
+        for (let i = lastNonZeroFoundAt; i < nums.length; i++) {
+            console.log(`Filling index ${i} with zero`);
+            nums[i] = 0;
+            console.log("  -> Array state after filling zero:", nums);
+        }
+
+        // Log final state of the array.
+        console.log("Final array:", nums);
+    }
+
+    /**
+     * @param {number[]} nums
+     * @return {boolean}
+     */
+    containsDuplicate = function (nums) {
+        let seen = new Set()
+        for (let i = 0; i < nums.length; i++) {
+            if (seen.has(nums[i])) {
+                return true
+            }
+            seen.add(nums[i])
+            console.log(seen)
+        }
+        return false
+    }
+
+    /**
+     * @param {number[]} nums
+     * @param {number} k
+     * @return {void} Do not return anything, modify nums in-place instead.
+     */
+    rotate = function (nums, k) {
+        for (let j = 0; j < k; j++) {
+            let lastItem = nums[nums.length - 1]
+            for (let i = nums.length - 1; i > 0; i--) {
+                nums[i] = nums[i - 1]
+            }
+            nums[0] = lastItem
+        }
+    }
+
+    /**
+     * @param {number[]} nums
+     * @param {number} k
+     * @return {void} Do not return anything, modify nums in-place instead.
+     */
+    rotate2 = function (nums, k) {
+        let length = nums.length
+        k = k % length // Adjust k if k is greater than length
+        let movingArray = nums.splice(0, length - k)
+        nums.push(...movingArray)
     }
 }
 
-export { MyArray, App }
+class App {
+    run = () => {
+        var exercises = new Exercises()
+        let input = [1, 2, 3, 4, 5, 6, 7]
+        let result = exercises.rotate2(input, 3)
+        console.log(`Expect -> [5,6,7,1,2,3,4]; Return -> ${input}`)
+    }
+}
+
+export { MyArray, App, Exercises }
