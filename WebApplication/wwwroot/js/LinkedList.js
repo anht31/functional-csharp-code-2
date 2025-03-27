@@ -41,6 +41,13 @@ LinkedList3.Node = class {
     }
 }
 
+class Node {
+    constructor(value) {
+        this.value = value
+        this.next = null
+    }
+}
+
 class LinkedList {
     constructor(value) {
         this.head = {
@@ -66,13 +73,82 @@ class LinkedList {
         this.length++
     }
 
+    insert(index, value) {
+        if (index < 0) return
+        if (index > this.length) {
+            this.append(value)
+            return
+        }
+        if (index == 0) {
+            this.prepend(value)
+            return
+        }
+
+        const leader = this.traverseToIndex(index - 1)
+        const newNode = { value, next: null }
+
+        // 1 -> [newNode] -> 2
+        const holdingPoint = leader.next
+        leader.next = newNode
+        newNode.next = holdingPoint
+        this.length++
+    }
+
+    remove(index) {
+        if (index < 0 || index >= this.length)
+            return
+
+        if (index === 0) {
+            this.head = this.head.next
+            return
+        }
+
+        console.log(this.head)
+
+        const leader = this.traverseToIndex(index - 1)
+        //const holdingPoint = leader.next?.next
+        //delete leader.next // no need delete, because no pointer wilL GC
+        const unwantedNode = leader.next
+        leader.next = unwantedNode.next
+        this.length--
+    }
+
+    traverseToIndex(index) {
+        let currentNode = this.head
+        let currentIndex = 0
+        while (currentIndex < index && currentNode != null) {
+            currentNode = currentNode.next
+            currentIndex++
+        }
+        return currentNode
+    }
+
+    printList() {
+        const array = []
+        let currentNode = this.head
+        while (currentNode !== null) {
+            array.push(currentNode.value)
+            currentNode = currentNode.next
+        }
+        return array
+    }
+
     demo() {
-        // 10 --> 5 --> 16
+        // 1 -> 10 --> 5 --> 16
         let myLinkedList = new LinkedList(10)
         myLinkedList.append(5)
         myLinkedList.append(16)
         myLinkedList.prepend(1)
+        console.log(myLinkedList.printList())
+
+        // 1 -> 10 --> [99] --> 5 --> 16
+        myLinkedList.insert(2, 99)
+        console.log(myLinkedList.printList())
+
         console.log(myLinkedList)
+        myLinkedList.remove(2)
+        console.log(myLinkedList.printList())
+
     }
 }
 
