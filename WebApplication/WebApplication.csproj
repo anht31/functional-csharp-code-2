@@ -7,17 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\HashTable.js" />
     <Content Remove="wwwroot\js\hasPairWithSum.js" />
+    <Content Remove="wwwroot\js\LinkedList.js" />
     <Content Remove="wwwroot\js\MyArray.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\HashTable.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\hasPairWithSum.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\LinkedList.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\MyArray.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\HashTable.js" />
     <None Include="wwwroot\js\hasPairWithSum.js" />
+    <None Include="wwwroot\js\LinkedList.js" />
     <None Include="wwwroot\js\MyArray.js" />
   </ItemGroup>
 

@@ -1,3 +1,3 @@
-﻿import { App } from './MyArray.js'
+﻿import { App } from './LinkedList.js'
 
 new App().run();
