@@ -174,8 +174,10 @@ class DoubleLinkedList {
 
     prepend(value) {
         const newNode = { value, next: null, prev: null }
-        this.head.prev = newNode
-        newNode.next = this.head
+        const nextNode = this.head
+        newNode.next = nextNode
+        nextNode.prev = newNode
+
         this.head = newNode
         this.length++
     }
