@@ -168,6 +168,7 @@ class DoubleLinkedList {
         const current = this.tail
         current.next = newNode
         newNode.prev = current
+
         this.tail = newNode
         this.length++
     }
