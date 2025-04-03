@@ -195,12 +195,14 @@ class DoubleLinkedList {
         }
 
         const leader = this.traverseToIndex(index - 1)
-        const newNode = { value, next: null }
+        const newNode = { value, next: null, prev: null }
 
-        // 1 -> [newNode] -> 2
+        // (10) -> newNode (99) -> holdingPoint (5)
         const holdingPoint = leader.next
         leader.next = newNode
         newNode.next = holdingPoint
+        newNode.prev = leader
+        holdingPoint.prev = newNode
         this.length++
     }
 
@@ -213,13 +215,15 @@ class DoubleLinkedList {
             return
         }
 
-        console.log(this.head)
-
         const leader = this.traverseToIndex(index - 1)
+
+        // leader (10) -> unWantedNode (99) -> nextNode (5)
         //const holdingPoint = leader.next?.next
         //delete leader.next // no need delete, because no pointer wilL GC
-        const unwantedNode = leader.next
+        let unwantedNode = leader.next
+        const nextNode = unwantedNode.next
         leader.next = unwantedNode.next
+        //nextNode.prev = leader
         this.length--
     }
 
@@ -249,15 +253,16 @@ class DoubleLinkedList {
         myLinkedList.append(5)
         myLinkedList.append(16)
         myLinkedList.prepend(1)
-        console.log(myLinkedList.printList())
-        console.log(myLinkedList)
+        //console.log(myLinkedList.printList())
+        //console.log(myLinkedList)
 
         // 1 -> 10 --> [99] --> 5 --> 16
-        //myLinkedList.insert(2, 99)
-        //console.log(myLinkedList.printList())
+        myLinkedList.insert(2, 99)
+        console.log(myLinkedList)
 
-        //console.log(myLinkedList)
-        //myLinkedList.remove(2)
+        // 1 -> 10 --> 5 --> 16
+        myLinkedList.remove(2)
+        console.log(myLinkedList)
         //console.log(myLinkedList.printList())
 
     }
