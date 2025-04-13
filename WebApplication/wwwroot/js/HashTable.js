@@ -1,4 +1,4 @@
-﻿import { LinkedList } from 'LinkedList.js'
+﻿import { LinkedList } from './LinkedList.js'
 
 class HashTable {
     constructor(size) {
@@ -8,19 +8,34 @@ class HashTable {
     set = (key, value) => {
         var address = this.$_hash(key)
         if (!this.data[address]) {
-            this.data[address] = new LinkedList()
+            //this.data[address] = []
+            this.data[address] = new LinkedList({ key, value })
+        } else {
+            this.data[address].append({ key, value })
         }
-        this.data[address].append([key, value])
+        //this.data[address].push([ key, value ])
     }
 
     get = (key) => {
         var address = this.$_hash(key)
         var currentBasket = this.data[address]
         if (currentBasket.length) {
-            for (let i = 0; i < currentBasket.length; i++) {
-                if (currentBasket[i][0] === key)
-                    return currentBasket[i][1]
+
+            // LinkedList
+            let node = currentBasket.head
+            while (node !== null) {
+                if (node.value?.key === key) {
+                    return node.value?.value
+                }
+                node = node.next
             }
+            return undefined
+
+            // Array style
+            //for (let i = 0; i < currentBasket.length; i++) {
+            //    if (currentBasket[i][0] === key)
+            //        return currentBasket[i][1]
+            //}
         }
 
         return undefined
@@ -29,8 +44,18 @@ class HashTable {
     keys = () => {
         let keys = []
         for (let i = 0; i < this.data.length; i++) {
-            for (let j = 0; j < this.data[i].length; j++) {
-                keys.push(this.data[i][j][0])
+            // Array
+            //for (let j = 0; j < this.data[i].length; j++) {
+            //    keys.push(this.data[i][j][0])
+            //}
+
+            // ListedList
+            if (this.data[i] != undefined) {
+                let node = this.data[i].head
+                while (node !== null) {
+                    keys.push(node.value?.key)
+                    node = node.next
+                }
             }
         }
         return keys
@@ -48,8 +73,8 @@ class HashTable {
         const myHashTable = new HashTable(2)
         myHashTable.set('grapes', 10000)
         myHashTable.set('banana', 20000)
-        myHashTable.set('orang', 30000)
-        let grapes = myHashTable.get('grapes')
+        myHashTable.set('orange', 30000)
+        let grapes = myHashTable.get('orange')
         console.log(grapes)
         console.log(myHashTable)
         console.log(myHashTable.keys())
@@ -110,8 +135,9 @@ class Study {
 }
 class App {
     run = () => {
-        let result = new Study().firstRecurringCharacter([2, 5, 1, 1, 5, 2])
-        console.log(`Result: ${result}`)
+        new HashTable().demo()
+        //let result = new Study().firstRecurringCharacter([2, 5, 1, 1, 5, 2])
+        //console.log(`Result: ${result}`)
     }
 }
 
