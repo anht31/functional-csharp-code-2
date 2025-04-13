@@ -1,4 +1,6 @@
-﻿class HashTable {
+﻿import { LinkedList } from 'LinkedList.js'
+
+class HashTable {
     constructor(size) {
         this.data = new Array(size)
     }
@@ -6,9 +8,9 @@
     set = (key, value) => {
         var address = this.$_hash(key)
         if (!this.data[address]) {
-            this.data[address] = []
+            this.data[address] = new LinkedList()
         }
-        this.data[address].push([key, value])
+        this.data[address].append([key, value])
     }
 
     get = (key) => {

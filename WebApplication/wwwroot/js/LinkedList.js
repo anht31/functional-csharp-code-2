@@ -54,7 +54,8 @@ class LinkedList {
             value: value,
             next: null
         }
-        this.tail = this.head // ref to current tail (use this as single access for LinkedList)
+        // ref to current tail (use this as single access for LinkedList)
+        this.tail = this.head
         this.length = 1
     }
 
@@ -133,21 +134,62 @@ class LinkedList {
         return array
     }
 
+    reverse2() {
+
+        if (this.length == 1)
+            return this
+
+        let node = this.head
+        const reverseList = new LinkedList(node.value)
+        node = node.next
+        while (node != null) {
+            console.log(node)
+            reverseList.prepend(node.value)
+            node = node.next
+        }
+        return reverseList
+    }
+
+    reverse() {
+        if (this.length == 1)
+            return this
+
+        let first = this.head
+        let second = first.next
+        this.tail = first
+        first.next = null
+
+        while (second != null) {
+            let holdingPoint = second.next
+            second.next = first
+            first = second
+            second = holdingPoint
+
+            //console.log(first)
+            //console.log(second)
+        }
+
+        this.head = first
+    }
+
     demo() {
         // 1 -> 10 --> 5 --> 16
-        let myLinkedList = new LinkedList(10)
-        myLinkedList.append(5)
-        myLinkedList.append(16)
+        let myLinkedList = new LinkedList(2)
+        myLinkedList.append(3)
+        myLinkedList.append(4)
         myLinkedList.prepend(1)
         console.log(myLinkedList.printList())
 
-        // 1 -> 10 --> [99] --> 5 --> 16
-        myLinkedList.insert(2, 99)
+        myLinkedList.reverse()
         console.log(myLinkedList.printList())
 
-        console.log(myLinkedList)
-        myLinkedList.remove(2)
-        console.log(myLinkedList.printList())
+        //// 1 -> 10 --> [99] --> 5 --> 16
+        //myLinkedList.insert(2, 99)
+        //console.log(myLinkedList.printList())
+
+        //console.log(myLinkedList)
+        //myLinkedList.remove(2)
+        //console.log(myLinkedList.printList())
 
     }
 }
@@ -159,7 +201,8 @@ class DoubleLinkedList {
             next: null,
             prev: null
         }
-        this.tail = this.head // ref to current tail (use this as single access for LinkedList)
+        // ref to current tail (use this as single access for LinkedList)
+        this.tail = this.head
         this.length = 1
     }
 
@@ -223,7 +266,7 @@ class DoubleLinkedList {
         let unwantedNode = leader.next
         const nextNode = unwantedNode.next
         leader.next = unwantedNode.next
-        //nextNode.prev = leader
+        nextNode.prev = leader
         this.length--
     }
 
@@ -247,6 +290,16 @@ class DoubleLinkedList {
         return array
     }
 
+    printReverse() {
+        const array = []
+        let currentNode = this.tail
+        while (currentNode != null) {
+            array.push(currentNode.value)
+            currentNode = currentNode.prev
+        }
+        return array
+    }
+
     demo() {
         // 1 -> 10 --> 5 --> 16
         let myLinkedList = new DoubleLinkedList(10)
@@ -263,7 +316,8 @@ class DoubleLinkedList {
         // 1 -> 10 --> 5 --> 16
         myLinkedList.remove(2)
         console.log(myLinkedList)
-        //console.log(myLinkedList.printList())
+        console.log(myLinkedList.printList())
+        console.log(myLinkedList.printReverse())
 
     }
 }
@@ -271,7 +325,7 @@ class DoubleLinkedList {
 
 class App {
     run = () => {
-        new DoubleLinkedList().demo()
+        new LinkedList().demo()
     }
 }
 
