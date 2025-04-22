@@ -1,3 +1,3 @@
-﻿import { App } from './HashTable.js'
+﻿import { App } from './Stack.LinkedList.js'
 
 new App().run();
