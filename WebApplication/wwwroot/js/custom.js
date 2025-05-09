@@ -1,3 +1,3 @@
-﻿import { App } from './QueueByStack.js'
+﻿import { App } from './BinarySearchTree.js'
 
 new App().run();
