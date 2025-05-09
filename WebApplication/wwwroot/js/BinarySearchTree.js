@@ -41,7 +41,7 @@ class BinarySearchTree {
     remove(value) {
 
         if (!this.root)
-            return
+            return false
 
         // find removeNode & it's parent
         const { removeNode, parent } = this.$getRemoveNodeAndItsParent(value)
@@ -50,7 +50,7 @@ class BinarySearchTree {
         //console.log(parent)
 
         if (!removeNode)
-            return
+            return false
 
         const direct = removeNode === parent?.left ? 'left' : 'right'
         const isRemoveNodeIsLeaf = !removeNode.left && !removeNode.right
@@ -59,7 +59,7 @@ class BinarySearchTree {
         if (isRemoveNodeIsLeaf) {
             if (!parent) {
                 this.root = null
-                return
+                return true
             }
 
             parent[direct] = null
@@ -67,7 +67,7 @@ class BinarySearchTree {
         else if (isRemoveNodeHasOneChild) {
             if (!parent) {
                 this.root = removeNode?.left ?? removeNode?.right
-                return
+                return true
             }
 
             parent[direct] = removeNode?.left ?? removeNode?.right
@@ -91,9 +91,9 @@ class BinarySearchTree {
                 // go right, then go left until meet Leaf
                 const { successor, parentSuccessor } = this.$getSuccessorAndItsParent(removeNode)
 
+                parentSuccessor.left = successor.right // continue right branch
                 successor.left = removeNode.left
                 successor.right = removeNode.right
-                parentSuccessor.left = null
 
                 if (!parent) {
                     this.root = successor
@@ -103,6 +103,8 @@ class BinarySearchTree {
             }
 
         }
+
+        return true
     }
 
     $getRemoveNodeAndItsParent(value) {
@@ -117,7 +119,7 @@ class BinarySearchTree {
             currentNode = value < currentNode.value ? currentNode.left : currentNode.right
         }
 
-        return null
+        return { removeNode: null, parent: null }
     }
 
 
@@ -186,8 +188,9 @@ class App {
 
 
         const tree = new BinarySearchTree();
-        tree.inserts(1, 6, 5, 9, 8, 10, 7)
-        tree.remove(6)
+        tree.inserts(50, 30, 70);   // 50 / 30  70
+
+        tree.remove(999);           // 999 không có trong cây
 
         //tree.insert(30);
         //tree.insert(54);
