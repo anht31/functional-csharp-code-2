@@ -1,3 +1,3 @@
-﻿import { App } from './BinarySearchTree.js'
+﻿import { App } from './BinaryHeapTree.js'
 
 new App().run();
