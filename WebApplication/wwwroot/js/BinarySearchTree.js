@@ -156,30 +156,83 @@ class BinarySearchTree {
     }
 }
 
-function traverse(node) {
-    console.log(node?.value)
-    const tree = { value: node.value };
-    tree.left = node.left === null ? null : traverse(node.left);
-    tree.right = node.right === null ? null : traverse(node.right);
-    return tree;
+//function traverse(node) {
+//    if (!node) return null
+
+//    const value = node.value
+//    const left = node?.left && traverse(node?.left)
+//    const right = node?.right && traverse(node?.right)
+
+//    return { value, left, right }
+//}
+
+const traverse = node => node && {
+    value: node.value,
+    left: traverse(node.left),
+    right: traverse(node.right)
 }
+
+//     9
+//  4     20
+//1  6  15  70
+
+function traverseIterate(node) {
+
+    if (!node)
+        return null
+
+    let stack = []
+    let targetNode = { value: node.value }
+    let tree = targetNode
+    let currentNode = node
+
+    let exit = 100
+
+    while (currentNode && --exit > 0) {
+        targetNode.value = currentNode?.value
+        targetNode.left = null
+        targetNode.right = null
+        if (currentNode.right) {
+            targetNode.right = targetNode.right ?? {}
+            stack.push({ source: currentNode.right, target: targetNode.right })
+        }
+
+        //currentNode.left && stack.push({ source: currentNode.left, target: targetNode.left })
+        if (currentNode.left) {
+            currentNode = currentNode.left
+            targetNode.left = {}
+            targetNode = targetNode.left
+        } else if (stack.length > 0) {
+            const { source, target } = stack.pop()
+            currentNode = source
+            targetNode = target
+        } else {
+            currentNode = null
+        }
+    }
+
+    return tree
+}
+
 
 class App {
     run() {
-        //const tree = new BinarySearchTree();
-        // 9, 4, 6, 20, 70, 15, 1
-        //tree.insert(9);
-        //tree.insert(4);
-        //tree.insert(6);
-        //tree.insert(20);
-        //tree.insert(70);
-        //tree.insert(15);
-        //tree.insert(1);
+        const tree = new BinarySearchTree();
+         //9, 4, 6, 20, 70, 15, 1
+        tree.insert(9);
+        tree.insert(4);
+        tree.insert(20);
+
+        tree.insert(6);
+        tree.insert(70);
+        tree.insert(15);
+        tree.insert(1);
 
         //tree.remove(9);
-        //console.log(tree.root)
+        console.log(tree.root)
         //JSON.stringify(traverse(tree.root))
-        //console.log(traverse(tree.root))
+        console.log(traverse(tree.root))
+        console.log(traverseIterate(tree.root))
         //console.log(tree.lookup(20));
 
         //     9
@@ -187,10 +240,10 @@ class App {
         //1  6  15  70
 
 
-        const tree = new BinarySearchTree();
-        tree.inserts(50, 30, 70);   // 50 / 30  70
+        //const tree = new BinarySearchTree();
+        //tree.inserts(50, 30, 70);   // 50 / 30  70
 
-        tree.remove(999);           // 999 không có trong cây
+        //tree.remove(999);           // 999 không có trong cây
 
         //tree.insert(30);
         //tree.insert(54);
@@ -199,7 +252,7 @@ class App {
         //tree.insert(44);
 
         //tree.remove(54);
-        console.log(tree.root)
+        //console.log(tree.root)
         //JSON.stringify(traverse(tree.root))
         //console.log(traverse(tree.root))
         //console.log(tree.lookup(20));
