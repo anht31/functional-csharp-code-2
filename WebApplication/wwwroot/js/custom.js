@@ -1,3 +1,3 @@
-﻿import { App } from './BinarySearchTree.js'
+﻿import { App } from './QuickSort.js'
 
 new App().run();

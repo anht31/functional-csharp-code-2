@@ -176,6 +176,30 @@ const traverse = node => node && {
 //  4     20
 //1  6  15  70
 
+function traverseIterate2(root) {
+    if (!root) return null;
+
+    const result = {};                           // sẽ trả về
+    const stack = [{ src: root, dst: result }];
+
+    // DFS using explicit stack
+    while (stack.length) {
+        const { src, dst } = stack.pop();
+
+        dst.value = src.value;
+
+        // Chuẩn bị rẽ trái & phải
+        dst.left = src.left ? {} : null;
+        dst.right = src.right ? {} : null;
+
+        // Đẩy right trước để left được xử lý trước (pre-order)
+        if (src.right) stack.push({ src: src.right, dst: dst.right });
+        if (src.left) stack.push({ src: src.left, dst: dst.left });
+    }
+
+    return result;
+}
+
 function traverseIterate(node) {
 
     if (!node)
@@ -231,7 +255,7 @@ class App {
         //tree.remove(9);
         console.log(tree.root)
         //JSON.stringify(traverse(tree.root))
-        console.log(traverse(tree.root))
+        //console.log(traverse(tree.root))
         console.log(traverseIterate(tree.root))
         //console.log(tree.lookup(20));
 
