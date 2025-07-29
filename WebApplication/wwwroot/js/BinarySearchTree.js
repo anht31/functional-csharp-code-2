@@ -7,8 +7,13 @@
 }
 
 class BinarySearchTree {
-    constructor() {
-        this.root = null;
+
+    constructor(value) {
+        if (value === undefined) {
+            this.root = null;
+        } else {
+            this.root = new Node(value);
+        }
     }
 
     inserts(...items) {
@@ -154,13 +159,44 @@ class BinarySearchTree {
             node.right = newNode
         }
     }
+
+
+    BreadthFirstSearchR(queue, list) {
+        if (!queue.length) {
+            return list;
+        }
+        const currentNode = queue.shift();
+        list.push(currentNode.value);
+
+        if (currentNode.left) {
+            queue.push(currentNode.left);
+        }
+        if (currentNode.right) {
+            queue.push(currentNode.right);
+        }
+
+        return this.BreadthFirstSearchR(queue, list);
+    }
+
+    Validate(queue) {
+        let valid = true
+        if (!queue.length) return valid
+
+        const { node, min, max } = queue.shift()
+        if (node.value <= min || node.value >= max) return false
+
+        node.leff && queue.push({ node: node.left, min: min, max: node.value })
+        node.right && queue.push({ node: node.right, min: node.value, max: max})
+        return this.Validate(queue)
+    }
+
 }
 
 //function traverse(node) {
 //    if (!node) return null
 
 //    const value = node.value
-//    const left = node?.left && traverse(node?.left)
+//    const left = node?.left && traverse(node?.left) 
 //    const right = node?.right && traverse(node?.right)
 
 //    return { value, left, right }
@@ -238,19 +274,49 @@ function traverseIterate(node) {
     return tree
 }
 
+function Deserialize(data) {
+    if (!data.length || data[0] === null) return null;
+
+    let tree = new BinarySearchTree(data[0]);
+    let queue = [tree.root];
+    let i = 1;
+
+    while (i < data.length) {
+        let current = queue.shift();
+
+        // Left child
+        if (data[i] !== null && data[i] !== undefined) {
+            current.left = new Node(data[i]);
+            queue.push(current.left);
+        }
+        i++;
+
+        // Right child
+        if (i < data.length && data[i] !== null && data[i] !== undefined) {
+            current.right = new Node(data[i]);
+            queue.push(current.right);
+        }
+        i++;
+    }
+    return tree;
+}
 
 class App {
     run() {
-        const tree = new BinarySearchTree();
-         //9, 4, 6, 20, 70, 15, 1
-        tree.insert(9);
-        tree.insert(4);
-        tree.insert(20);
+        //let tree = Deserialize([2, 1, 3])
+        let tree = Deserialize([9, 4, 20, 1, 6, 15, 70])
+        //let tree = Deserialize([5, 1, 4, null, null, 3, 6])
 
-        tree.insert(6);
-        tree.insert(70);
-        tree.insert(15);
-        tree.insert(1);
+        //9, 4, 6, 20, 70, 15, 1
+        //let tree = new BinarySearchTree();
+        //tree.insert(9);
+        //tree.insert(4);
+        //tree.insert(20);
+
+        //tree.insert(6);
+        //tree.insert(70);
+        //tree.insert(15);
+        //tree.insert(1);
 
         //tree.remove(9);
         console.log(tree.root)
@@ -262,6 +328,12 @@ class App {
         //     9
         //  4     20
         //1  6  15  70
+
+        //console.log('BFS', tree.BreadthFirstSearchR([tree.root], []))
+
+        //console.log('Validate:', tree.Validate([tree.root], true))
+
+        console.log('Validate:', tree.Validate([ {node: tree.root, min: -Infinity, max: Infinity} ]))
 
 
         //const tree = new BinarySearchTree();

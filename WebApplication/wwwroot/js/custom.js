@@ -1,3 +1,3 @@
-﻿import { App } from './QuickSort.js'
+﻿import { App } from './DynamicPrograming.js'
 
 new App().run();
