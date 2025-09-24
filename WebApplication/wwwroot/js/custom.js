@@ -1,3 +1,3 @@
-﻿import { App } from './DynamicPrograming.js'
+﻿import { App } from './WeightGraph.js'
 
 new App().run();

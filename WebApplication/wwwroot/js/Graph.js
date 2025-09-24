@@ -51,6 +51,7 @@ class App {
         myGraph.addEdge('0', '2');
         myGraph.addEdge('6', '5');
 
+        console.log(myGraph)
         myGraph.showConnections();
         //Answer:
         // 0-->1 2 
