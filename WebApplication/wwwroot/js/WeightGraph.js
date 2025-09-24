@@ -67,20 +67,35 @@ class WeightGraph {
             unVisited.map(k => [k, new NodeInfo()])
         )
         table.set(fromNode, new NodeInfo(0, undefined))
+        let shortestNode = fromNode
 
-        for (let nodeName of unVisited) {
-            const nodeConnections = this.adjacentList[nodeName]
-            const shortestDist = table.get(nodeName).dist
-            visited.push(nodeName)
+        // for (let nodeName of unVisited) {
+        while (shortestNode && unVisited.includes(shortestNode)) {
+            const nodeConnections = this.adjacentList[shortestNode]
+            const shortestDist = table.get(shortestNode).dist
+            visited.push(shortestNode)
             for (let neightbor of nodeConnections) {
                 const distance = neightbor.weight + shortestDist
                 const shortestNeighbor = table.get(neightbor.node).dist
-                distance < shortestNeighbor && table.set(neightbor.node, new NodeInfo(distance, nodeName))
+                distance < shortestNeighbor && table.set(neightbor.node, new NodeInfo(distance, shortestNode))
             }
+
+            let nodeInfo = new NodeInfo(Infinity, '')
+            for (let node of table) {
+                if (visited.includes(node[0])) continue
+
+                [nodeInfo, shortestNode] = node[1].dist <= nodeInfo.dist 
+                    ? [node[1], node[0]] : [nodeInfo, shortestNode]
+            }
+
+            if (visited.includes(shortestNode)) break
+
+            console.log(shortestNode)
         }
 
         this.table = table
         this.isCalc = true
+        console.log(table)
     }
 
     shortestPath(from, to) {
