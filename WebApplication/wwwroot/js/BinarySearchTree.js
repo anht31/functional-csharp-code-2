@@ -274,6 +274,11 @@ function traverseIterate(node) {
     return tree
 }
 
+/**
+ * Array -> Tree
+ * @param {number[]} data
+ * @returns {BinarySearchTree}
+ */
 function Deserialize(data) {
     if (!data.length || data[0] === null) return null;
 
@@ -301,57 +306,58 @@ function Deserialize(data) {
     return tree;
 }
 
-class App {
-    run() {
-        //let tree = Deserialize([2, 1, 3])
-        let tree = Deserialize([9, 4, 20, 1, 6, 15, 70])
-        //let tree = Deserialize([5, 1, 4, null, null, 3, 6])
+class Sample {
 
+    createTree = () => {
         //9, 4, 6, 20, 70, 15, 1
-        //let tree = new BinarySearchTree();
-        //tree.insert(9);
-        //tree.insert(4);
-        //tree.insert(20);
+        let tree = new BinarySearchTree()
+        tree.insert(9)
+        tree.insert(4)
+        tree.insert(20)
+        tree.insert(6)
+        tree.insert(70)
+        tree.insert(15)
+        tree.insert(1)
+        return tree
+    }
 
-        //tree.insert(6);
-        //tree.insert(70);
-        //tree.insert(15);
-        //tree.insert(1);
-
-        //tree.remove(9);
-        console.log(tree.root)
-        //JSON.stringify(traverse(tree.root))
-        //console.log(traverse(tree.root))
-        console.log(traverseIterate(tree.root))
-        //console.log(tree.lookup(20));
+    basic = () => {
+        const tree = this.createTree()
 
         //     9
         //  4     20
         //1  6  15  70
+        console.log(tree.root)
+        
+        tree.remove(9);
+        JSON.stringify(traverse(tree.root))
+        console.log(traverse(tree.root))
+        console.log(traverseIterate(tree.root))
+        console.log(tree.lookup(20));
+    }
+    
+    bfs = () => {
+        const tree = this.createTree()
+        console.log(tree)
+        console.log('BFS', tree.BreadthFirstSearchR([tree.root], []))
+    }
 
-        //console.log('BFS', tree.BreadthFirstSearchR([tree.root], []))
-
-        //console.log('Validate:', tree.Validate([tree.root], true))
+    validation = () => {
+        //let tree = Deserialize([2, 1, 3])
+        let tree = Deserialize([9, 4, 20, 1, 6, 15, 70])
+        //let tree = Deserialize([5, 1, 4, null, null, 3, 6])
 
         console.log('Validate:', tree.Validate([ {node: tree.root, min: -Infinity, max: Infinity} ]))
+    }
+}
 
+class App {
+    run() {
+        new Sample().basic()
 
-        //const tree = new BinarySearchTree();
-        //tree.inserts(50, 30, 70);   // 50 / 30  70
+        // new Sample().validation()
 
-        //tree.remove(999);           // 999 không có trong cây
-
-        //tree.insert(30);
-        //tree.insert(54);
-        //tree.insert(38);
-        //tree.insert(55);
-        //tree.insert(44);
-
-        //tree.remove(54);
-        //console.log(tree.root)
-        //JSON.stringify(traverse(tree.root))
-        //console.log(traverse(tree.root))
-        //console.log(tree.lookup(20));
+        // new Sample().bfs()
     }
 }
 
