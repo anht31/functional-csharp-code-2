@@ -160,22 +160,43 @@ class BinarySearchTree {
         }
     }
 
+    BreadthFirstSearch() {
+        let currentNode = this.root
+        const list = []
+        const queue = []
+        queue.push(currentNode)
+
+        while(queue.length > 0) {
+            currentNode = queue.shift()
+            list.push(currentNode.value)
+            currentNode.left && queue.push(currentNode.left)
+            currentNode.right && queue.push(currentNode.right)
+        }
+
+        return list
+    }
 
     BreadthFirstSearchR(queue, list) {
-        if (!queue.length) {
-            return list;
-        }
-        const currentNode = queue.shift();
-        list.push(currentNode.value);
+        if (!queue.length) return list
 
-        if (currentNode.left) {
-            queue.push(currentNode.left);
-        }
-        if (currentNode.right) {
-            queue.push(currentNode.right);
-        }
+        const currentNode = queue.shift()
+        list.push(currentNode.value)
+        currentNode.left && queue.push(currentNode.left)
+        currentNode.right && queue.push(currentNode.right)
 
-        return this.BreadthFirstSearchR(queue, list);
+        return this.BreadthFirstSearchR(queue, list)
+    }
+
+    DFSInorder() {
+        return traverseInOrder(this.root, [])
+    }
+
+    DFSPreorder() {
+        return traversePreOrder(this.root, [])
+    }
+
+    DFSPostorder() {
+        return traversePostOrder(this.root, [])
     }
 
     Validate(queue) {
@@ -185,22 +206,44 @@ class BinarySearchTree {
         const { node, min, max } = queue.shift()
         if (node.value <= min || node.value >= max) return false
 
-        node.leff && queue.push({ node: node.left, min: min, max: node.value })
+        node.left && queue.push({ node: node.left, min: min, max: node.value })
         node.right && queue.push({ node: node.right, min: node.value, max: max})
         return this.Validate(queue)
     }
 
 }
 
-//function traverse(node) {
-//    if (!node) return null
+function traverseInOrder(node, list) {
+    node.left && traverseInOrder(node.left, list)
+    list.push(node.value)
+    node.right && traverseInOrder(node.right, list)
+    return list
+}
 
-//    const value = node.value
-//    const left = node?.left && traverse(node?.left) 
-//    const right = node?.right && traverse(node?.right)
+function traversePreOrder(node, list) {
+    list.push(node.value)
+    node.left && traversePreOrder(node.left, list)
+    node.right && traversePreOrder(node.right, list)
+    return list
+}
 
-//    return { value, left, right }
-//}
+function traversePostOrder(node, list) {
+    node.left && traversePostOrder(node.left, list)
+    node.right && traversePostOrder(node.right, list)
+    list.push(node.value)
+    return list
+} 
+
+
+function traverseseLegacy(node) {
+   if (!node) return null
+
+   const value = node.value
+   const left = node?.left && traverseLegacy(node?.left) 
+   const right = node?.right && traverseLegacy(node?.right)
+
+   return { value, left, right }
+}
 
 const traverse = node => node && {
     value: node.value,
@@ -310,6 +353,9 @@ class Sample {
 
     createTree = () => {
         //9, 4, 6, 20, 70, 15, 1
+        console.log("     9")
+        console.log("  4     20")
+        console.log("1  6  15  70")
         let tree = new BinarySearchTree()
         tree.insert(9)
         tree.insert(4)
@@ -318,6 +364,22 @@ class Sample {
         tree.insert(70)
         tree.insert(15)
         tree.insert(1)
+        console.log(tree)
+        return tree
+    }
+
+    createTreeFourLevel = () => {
+        console.log(`
+                9
+              /   \\
+            4       20
+           / \\     /  \\
+          2   6   15   70
+         / \\ / \\ / \\   / \\
+        1  3 5 7 14 16 69 71`);
+
+        let tree = Deserialize([9, 4, 20, 2, 6, 15, 70, 1, 3, 5, 7, 14, 16, 69, 71])
+        console.log(tree)
         return tree
     }
 
@@ -338,8 +400,15 @@ class Sample {
     
     bfs = () => {
         const tree = this.createTree()
-        console.log(tree)
-        console.log('BFS', tree.BreadthFirstSearchR([tree.root], []))
+        console.log('BFS', tree.BreadthFirstSearch())
+        console.log('BFS-R', tree.BreadthFirstSearchR([tree.root], []))
+    }
+
+    dfs = () => {
+        const tree = this.createTree()
+        console.log('DFS Inorder: ', tree.DFSInorder())
+        console.log('DFS Preorder: ', tree.DFSPreorder())
+        console.log('DFS Postorder: ', tree.DFSPostorder())
     }
 
     validation = () => {
@@ -353,11 +422,13 @@ class Sample {
 
 class App {
     run() {
-        new Sample().basic()
+        // new Sample().basic()
 
         // new Sample().validation()
 
         // new Sample().bfs()
+
+        new Sample().dfs()
     }
 }
 
