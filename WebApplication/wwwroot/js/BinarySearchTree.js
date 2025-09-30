@@ -234,7 +234,7 @@ function traversePostOrder(node, list) {
     return list
 } 
 
-// DFS - Preorder
+// DFS - Preorder: tranform Node -> to Object
 function traverseseLegacy(node) {
    if (!node) return null
 
@@ -245,7 +245,7 @@ function traverseseLegacy(node) {
    return { value, left, right }
 }
 
-// DFS - Preorder
+// DFS - Preorder: tranform Node -> to Object
 const traverse = node => node && {
     value: node.value,
     left: traverse(node.left),
@@ -256,6 +256,7 @@ const traverse = node => node && {
 //  4     20
 //1  6  15  70
 
+// tranform Node -> to Object
 function DFSPreorderTranverseInterative(root) {
     if (!root) return null
 
