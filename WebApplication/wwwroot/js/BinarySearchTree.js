@@ -234,7 +234,7 @@ function traversePostOrder(node, list) {
     return list
 } 
 
-
+// DFS - Preorder
 function traverseseLegacy(node) {
    if (!node) return null
 
@@ -245,6 +245,7 @@ function traverseseLegacy(node) {
    return { value, left, right }
 }
 
+// DFS - Preorder
 const traverse = node => node && {
     value: node.value,
     left: traverse(node.left),
@@ -255,67 +256,30 @@ const traverse = node => node && {
 //  4     20
 //1  6  15  70
 
-function traverseIterate2(root) {
-    if (!root) return null;
+function DFSPreorderTranverseInterative(root) {
+    if (!root) return null
 
-    const result = {};                           // sẽ trả về
-    const stack = [{ src: root, dst: result }];
+    const result = {}                           // sẽ trả về
+    const stack = [{ src: root, dst: result }]
 
     // DFS using explicit stack
     while (stack.length) {
-        const { src, dst } = stack.pop();
+        const { src, dst } = stack.pop()
 
-        dst.value = src.value;
+        dst.value = src.value
 
         // Chuẩn bị rẽ trái & phải
-        dst.left = src.left ? {} : null;
-        dst.right = src.right ? {} : null;
+        dst.left = src.left && {}
+        dst.right = src.right && {}
 
         // Đẩy right trước để left được xử lý trước (pre-order)
-        if (src.right) stack.push({ src: src.right, dst: dst.right });
-        if (src.left) stack.push({ src: src.left, dst: dst.left });
+        src.right && stack.push({ src: src.right, dst: dst.right })
+        src.left && stack.push({ src: src.left, dst: dst.left })
     }
 
-    return result;
+    return result
 }
 
-function traverseIterate(node) {
-
-    if (!node)
-        return null
-
-    let stack = []
-    let targetNode = { value: node.value }
-    let tree = targetNode
-    let currentNode = node
-
-    let exit = 100
-
-    while (currentNode && --exit > 0) {
-        targetNode.value = currentNode?.value
-        targetNode.left = null
-        targetNode.right = null
-        if (currentNode.right) {
-            targetNode.right = targetNode.right ?? {}
-            stack.push({ source: currentNode.right, target: targetNode.right })
-        }
-
-        //currentNode.left && stack.push({ source: currentNode.left, target: targetNode.left })
-        if (currentNode.left) {
-            currentNode = currentNode.left
-            targetNode.left = {}
-            targetNode = targetNode.left
-        } else if (stack.length > 0) {
-            const { source, target } = stack.pop()
-            currentNode = source
-            targetNode = target
-        } else {
-            currentNode = null
-        }
-    }
-
-    return tree
-}
 
 /**
  * Array -> Tree
@@ -393,8 +357,6 @@ class Sample {
         
         tree.remove(9);
         JSON.stringify(traverse(tree.root))
-        console.log(traverse(tree.root))
-        console.log(traverseIterate(tree.root))
         console.log(tree.lookup(20));
     }
     
@@ -409,6 +371,8 @@ class Sample {
         console.log('DFS Inorder: ', tree.DFSInorder())
         console.log('DFS Preorder: ', tree.DFSPreorder())
         console.log('DFS Postorder: ', tree.DFSPostorder())
+        console.log(traverse(tree.root))
+        console.log('DFSPreorderTranverseInterative: ', DFSPreorderTranverseInterative(tree.root))
     }
 
     validation = () => {
