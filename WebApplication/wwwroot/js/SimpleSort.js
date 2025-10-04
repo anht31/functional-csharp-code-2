@@ -8,11 +8,8 @@ function bubbleSort(array) {
         for (let a = 0; a < limit; a++) {
             let b = a + 1
             //console.log(`${a}-${b}`)
-            if (array[a] > array[b]) {
-                const temp = array[a]
-                array[a] = array[b]
-                array[b] = temp
-            }
+            if (array[a] > array[b])
+                [array[a], array[b]] = [array[b], array[a]] // swap
         }
         
     }
@@ -27,10 +24,7 @@ function SelectionSort(array) {
                 iMin = j
             }
         }
-
-        const temp = array[i]
-        array[i] = array[iMin]
-        array[iMin] = temp
+        [array[i], array[iMin]] = [array[iMin], array[i]] // swap
     }
 }
 
@@ -38,13 +32,9 @@ function InsertionSort(array) {
     for (let i = 1; i < array.length; i++) {
         for (let j = i; j > 0; j--) {
             let pre = j - 1
-            //console.log(`${i}->${array[i]}->${j}-${pre}`)
             if (array[pre] < array[j]) break
 
-            // swap
-            const temp = array[j]
-            array[j] = array[pre]
-            array[pre] = temp
+            [array[j], array[pre]] = [array[pre], array[j]] // swap
         }
     }
 }
