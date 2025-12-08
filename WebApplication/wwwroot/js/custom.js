@@ -1,3 +1,3 @@
-﻿import { App } from './BinarySearchTree.js'
+﻿import { App } from './Questions.js'
 
 new App().run();

@@ -256,6 +256,9 @@ const traverse = node => node && {
 //  4     20
 //1  6  15  70
 
+// DFS pre-order: 9, 4, 1, 6, 20, 15, 70
+// hug-wall: 9, 4, 1, 6, 20, 15, 70
+
 // tranform Node -> to Object
 function DFSPreorderTranverseInterative(root) {
     if (!root) return null
