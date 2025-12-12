@@ -147,6 +147,7 @@ const isNonAlphanumeric = (c) => {
     return !(isDigit || isUpper || isLower)
 }
 
+// Two Pointers – Opposite Ends
 /**
  * @param {string} s
  * @return {boolean}
@@ -168,6 +169,97 @@ var isPalindrome = function(s) {
     return true
 };
 
+// The same LeetCode
+function TreeNode(val, left, right) {
+    this.val = (val === undefined ? 0 : val);
+    this.left = (left === undefined ? null : left);
+    this.right = (right === undefined ? null : right);
+}
+
+function arrayToTree(arr) {
+    if (!arr || arr.length === 0 || arr[0] == null) return null;
+
+    const root = new TreeNode(arr[0]);
+    const queue = [root];
+    let qi = 0;          // pointer cho queue
+    let i = 1;           // pointer cho arr
+
+    while (qi < queue.length && i < arr.length) {
+        const node = queue[qi++];
+
+        // left child
+        if (i < arr.length) {
+            const leftVal = arr[i++];
+            if (leftVal != null) {
+                node.left = new TreeNode(leftVal);
+                queue.push(node.left);
+            } else {
+                node.left = null;
+            }
+        }
+
+        // right child
+        if (i < arr.length) {
+            const rightVal = arr[i++];
+            if (rightVal != null) {
+                node.right = new TreeNode(rightVal);
+                queue.push(node.right);
+            } else {
+                node.right = null;
+            }
+        }
+    }
+
+    return root;
+}
+
+function treeToArray(root) {
+    if (!root) return [];
+
+    const res = [];
+    const queue = [root];
+    let qi = 0;
+
+    while (qi < queue.length) {
+        const node = queue[qi++];
+
+        if (node) {
+            res.push(node.val);
+            queue.push(node.left);
+            queue.push(node.right);
+        } else {
+            res.push(null);
+        }
+    }
+
+    // Xoá null ở cuối mảng cho gọn (LeetCode thường không hiển thị trailing null)
+    while (res.length > 0 && res[res.length - 1] === null) {
+        res.pop();
+    }
+
+    return res;
+}
+
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var invertTree = function(root) {
+    let stack = [root]
+    let i = 0
+    while (stack[i]) {
+        const node = stack[i]
+        node.left && stack.push(node.left)
+        node.right && stack.push(node.right)
+        if (node.left || node.right) {
+            const temp = node.left
+            node.left = node.right
+            node.right = temp
+        }
+        i++
+    }
+    return root
+}
 
 class Demo {
     reverseString() {
@@ -206,11 +298,19 @@ class Demo {
         const result = isPalindrome(s)
         console.log(result)
     }
+
+    invertTree() {
+        const root = [4,2,7,1,3,6,9]
+        const tree = arrayToTree(root)
+        const result = invertTree(tree)
+        const arrayResult = treeToArray(result)
+        console.log(arrayResult)
+    }
 }
 
 class App {
     run() {
-        new Demo().isPalindrome()
+        new Demo().invertTree()
     }
 }
 
