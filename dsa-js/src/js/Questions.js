@@ -261,6 +261,40 @@ var invertTree = function(root) {
     return root
 }
 
+// Arrays & Hashing (Hash Table / Frequency Counting)
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+    if (s.length !== t.length) return false
+
+    let table = {}
+    for (let i = 0; i < s.length; i++) {
+        const c = s[i]
+        if (table[c] != undefined) {
+            table[c] += 1
+        } else {
+            table[c] = 1
+        }
+    }
+
+    for (let i = 0; i < t.length; i++) {
+        const c = t[i]
+        if (table[c] === undefined) return false
+
+        if (table[c] > 1) {
+            table[c] -= 1
+        } else {
+            delete table[c]
+        }
+    }
+
+    return true
+}
+
+
 class Demo {
     reverseString() {
         let s = ["h", "e", "l", "l", "o"]
@@ -306,11 +340,18 @@ class Demo {
         const arrayResult = treeToArray(result)
         console.log(arrayResult)
     }
+
+    isAnagram() {
+        const s = "anagram"
+        const t = "nagaram"
+        const result = isAnagram(s, t)
+        console.log(result)
+    }
 }
 
 class App {
     run() {
-        new Demo().invertTree()
+        new Demo().isAnagram()
     }
 }
 
