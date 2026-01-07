@@ -295,6 +295,58 @@ var isAnagram = function(s, t) {
 }
 
 
+// Binary Search - Divide & Conquer
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+    return searchBST(nums, target, 0, nums.length)
+}
+
+var searchBST = function(nums, target, start, end) {
+    if (start > end) return -1
+    let pivot = start + Math.floor((end - start) / 2)
+
+    if (target === nums[pivot])
+        return pivot
+
+    if (target < nums[pivot])
+        return searchBST(nums, target, start, pivot - 1)
+    
+    return searchBST(nums, target, pivot + 1, end)
+}
+
+
+// Graph / BFS-DFS / Flood Fill
+/**
+ * @param {number[][]} image
+ * @param {number} sr
+ * @param {number} sc
+ * @param {number} color
+ * @return {number[][]}
+ */
+var floodFill = function(image, sr, sc, color) {
+    const stack = [[sr, sc]]
+    const visited = {}
+    const startColor = image[sr][sc]
+    let l = 0
+
+    while (l < stack.length) {
+        const [r, c] = stack[l++]
+        if (image[r][c] === startColor)
+            image[r][c] = color
+        visited[[r, c]] = true
+        image[r] && image[r][c - 1] != undefined && !visited[[r, c - 1]] && stack.push([r, c - 1])
+        image[r] && image[r][c + 1] != undefined && !visited[[r, c + 1]] && stack.push([r, c + 1])
+        image[r - 1] && image[r - 1][c] != undefined && !visited[[r - 1, c]] && stack.push([r - 1, c])
+        image[r + 1] && image[r + 1][c] != undefined && !visited[[r + 1, c]] && stack.push([r + 1, c])
+    }
+
+    return image
+}
+
 class Demo {
     reverseString() {
         let s = ["h", "e", "l", "l", "o"]
@@ -347,11 +399,25 @@ class Demo {
         const result = isAnagram(s, t)
         console.log(result)
     }
+
+    search() {
+        const nums = [-1,0,3,5,9,12]
+        const target = 12
+        const result = search(nums, target)
+        console.log(result)
+    }
+
+    floodFill() {
+        const image = [[1,1,1],[1,1,0],[1,0,1]]
+        const sr = 1, sc = 1, color = 2
+        const result = floodFill(image, sr, sc, color)
+        console.log(result)
+    }
 }
 
 class App {
     run() {
-        new Demo().isAnagram()
+        new Demo().floodFill()
     }
 }
 
